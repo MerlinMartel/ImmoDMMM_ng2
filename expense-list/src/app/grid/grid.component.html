@@ -1,3 +1,38 @@
-<p>
-  grid works!
-</p>
+<link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/ag-grid.css" rel="stylesheet" />
+<link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/theme-office-ui-fabric.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://appsforoffice.microsoft.com/fabric/fabric-core/4.0.0/fabric.min.css">
+<link rel="stylesheet" href="https://appsforoffice.microsoft.com/fabric/fabric-js/1.0.0/fabric.components.min.css">
+
+<div *ngFor="let depense of depenseListItems">{{depense.Prix}} - {{depense.Valide}} - {{depense.GestionnairesChoice}} - {{depense.FournisseursId}}</div>
+<div *ngFor="let depense of depenseListDocuments">{{depense.Montant}} - {{depense.Valid_x00e9_}} - {{depense.GestionnairesChoice}} - {{depense.FournisseursId}}</div>
+
+
+
+<!--
+<style>
+  @media print
+  {
+    #s4-titlerow
+    {
+      display: none !important;
+    }
+  }
+</style>
+<ag-grid-ng2 #agGrid class="ag-fresh" style="width: 100%;"
+
+             [gridOptions]="gridOptions"
+             [columnDefs]="columnDefs"
+             [showToolPanel]="showToolPanel"
+             [rowData]="rowData"
+             enableColResize
+             enableSorting
+             enableFilter
+             groupHeaders
+             suppressRowClickSelection
+             toolPanelSuppressGroups
+             toolPanelSuppressValues
+             rowHeight="22"
+             rowSelection="multiple"
+             (rowClicked)="onRowClicked($event)">
+</ag-grid-ng2>
+-->
