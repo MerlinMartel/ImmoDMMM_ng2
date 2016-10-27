@@ -14,4 +14,7 @@ export class Expense {
   created:string;
   modified:string;
   providerId;
+  flat:string;
+  taxCategory:string;
+  relativeEditLink:string;
 }

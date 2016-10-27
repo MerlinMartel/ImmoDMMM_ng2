@@ -1,0 +1,8 @@
+.uma-app {
+  margin-top: 40px;
+}
+/*   Sharepoint modification */
+
+#s4-workspace {
+  overflow: hidden !important;
+}

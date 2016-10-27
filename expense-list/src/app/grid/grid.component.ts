@@ -32,6 +32,7 @@ export class GridComponent implements OnInit {
   ngOnInit() {
 
     pnp.sp.web.lists.getByTitle('Depenses').items.get().then(res => {
+      console.log('Documents');
       console.log(res);
       this.depenseListItems = res;
       _.map(this.depenseListItems, item => {
@@ -41,17 +42,58 @@ export class GridComponent implements OnInit {
         x.id = item.Id;
         x.created = item.Created;
         x.modified = item.Modified;
+        x.date = item.Date1;
         x.authorId = item.AuthorId;
-        x.providerId = item.ProviderId;
+        x.providerId = item.FournisseursId;
         x.title = item.Title;
+        if(item.odata){
+          x.relativeEditLink = item.odata.editLink;
+        }
+        x.manager = item.GestionnairesChoice;
+        if(item.Logements){
+          x.flat = item.Logements.Label;
+        }
+        if(item.TaxesCategory){
+          x.taxCategory = item.TaxesCategory.Label;
+        }
+
 
         this.Expenses.push(x);
       });
       console.log(this.Expenses);
     });
     pnp.sp.web.lists.getByTitle('Dépenses').items.get().then(res => {
+      console.log('Lists');
       console.log(res);
       this.depenseListDocuments = res;
+
+      _.map(this.depenseListDocuments, item => {
+        let x = new Expense;
+        x.price = item.Montant;
+        x.validated = item.Valid_x00e9_;
+        x.id = item.Id;
+        x.created = item.Created;
+        x.modified = item.Modified;
+        x.date = item.Date;
+        x.authorId = item.AuthorId;
+        x.providerId = item.FournisseursId;
+        x.title = item.Title;
+        if(item.odata){
+          x.relativeEditLink = item.odata.editLink;
+        }
+        x.manager = item.GestionnairesChoice;
+
+        if(item.Logements){
+          x.flat = item.Logements.Label;
+        }
+        if(item.TaxesCategory){
+          x.taxCategory = item.TaxesCategory.Label;
+        }
+        this.Expenses.push(x);
+      });
+
+      console.log(this.Expenses);
+
     });
 
 
