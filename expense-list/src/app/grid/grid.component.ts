@@ -4,6 +4,8 @@ import pnp from 'sp-pnp-js';
 import * as _ from 'lodash';
 import {GridOptions} from 'ag-grid/main';
 import {Expense} from './expense.model'
+import {Provider} from "./provider.model";
+import {TaxonomyHiddenList} from "./taxonomyHiddenList.model";
 
 @Component({
   selector: 'app-grid',
@@ -11,12 +13,14 @@ import {Expense} from './expense.model'
   styleUrls: ['./grid.component.css']
 })
 export class GridComponent implements OnInit {
-  Expenses: [Expense] = [];
-  depenseListItems:any;
-  depenseListDocuments:any;
+  expenses: [Expense] = [];
+  rowData: [Expense] = [];
+  providers : [Provider] = [];
+  taxonomyHiddenList : [TaxonomyHiddenList] = [];
+  depenseListItems: any;
+  depenseListDocuments: any;
   private gridOptions: GridOptions;
-  rowData;
-  private columnDefs : any[];
+  private columnDefs: any[];
   private rowCount: string;
 
   constructor() {
@@ -37,10 +41,10 @@ export class GridComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    pnp.sp.web.lists.getByTitle('Depenses').items.get().then(res => {
+    let batch = pnp.sp.createBatch();
+    this.gridOptions.rowData = this.rowData;
+    pnp.sp.web.lists.getByTitle('Depenses').items.top(10000).inBatch(batch).get().then(res => {
       console.log('Documents');
-      console.log(res);
       this.depenseListItems = res;
       _.map(this.depenseListItems, item => {
         let x = new Expense;
@@ -50,28 +54,37 @@ export class GridComponent implements OnInit {
         x.created = item.Created;
         x.modified = item.Modified;
         x.date = item.Date1;
+        //x.year = item.Date.getFullYear();
         x.authorId = item.AuthorId;
         x.providerId = item.FournisseursId;
         x.title = item.Title;
-        if(item.odata){
+        if (item.odata) {
           x.relativeEditLink = item.odata.editLink;
         }
         x.manager = item.GestionnairesChoice;
-        if(item.Logements){
+        if (item.Logements) {
           x.flat = item.Logements.Label;
         }
-        if(item.TaxesCategory){
+        if (item.TaxesCategory) {
           x.taxCategory = item.TaxesCategory.Label;
         }
 
 
-        this.Expenses.push(x);
+        this.expenses.push(x);
       });
-      console.log(this.Expenses);
+
+      if (this.rowData.length > 1) {
+        this.rowData.concat(this.expenses);
+      } else {
+        this.rowData = this.expenses
+      }
+
+
+      console.log('this.Expenses');
+      console.log(this.expenses);
     });
-    pnp.sp.web.lists.getByTitle('Dépenses').items.get().then(res => {
+    pnp.sp.web.lists.getByTitle('Dépenses').items.top(10000).inBatch(batch).get().then(res => {
       console.log('Lists');
-      console.log(res);
       this.depenseListDocuments = res;
 
       _.map(this.depenseListDocuments, item => {
@@ -82,28 +95,56 @@ export class GridComponent implements OnInit {
         x.created = item.Created;
         x.modified = item.Modified;
         x.date = item.Date;
+        //x.year = date.getYear();
         x.authorId = item.AuthorId;
         x.providerId = item.FournisseursId;
         x.title = item.Title;
-        if(item.odata){
+        if (item.odata) {
           x.relativeEditLink = item.odata.editLink;
         }
         x.manager = item.GestionnairesChoice;
 
-        if(item.Logements){
+        if (item.Logements) {
           x.flat = item.Logements.Label;
         }
-        if(item.TaxesCategory){
+        if (item.TaxesCategory) {
           x.taxCategory = item.TaxesCategory.Label;
         }
 
 
-        this.Expenses.push(x);
-        this.rowData = this.Expenses;
-        this.gridOptions.rowData = this.rowData
-      });
+        this.expenses.push(x);
 
-      console.log(this.Expenses);
+      });
+      if (this.rowData.length > 1) {
+        this.rowData.concat(this.expenses);
+      } else {
+        this.rowData = this.expenses
+      }
+      console.log(this.expenses);
+
+    });
+    pnp.sp.site.rootWeb.lists.getByTitle('Fournisseurs').items.top(5000).inBatch(batch).get().then(res => {
+      _.map(res, item => {
+        let x = new Provider;
+        x.id = item.Id;
+        x.title = item.Title;
+        this.providers.push(x);
+      });
+    console.log(this.providers)
+    });
+    pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).inBatch(batch).get().then(res => {
+      console.log(res);
+      _.map(res, item => {
+        let x = new TaxonomyHiddenList;
+        x.id = item.Id;
+        x.path1033 = item.Path1033;
+        x.path1036 = item.Path1036;
+        x.term1033 = item.Term1033;
+        x.term1036 = item.Term1036;
+        this.taxonomyHiddenList.push(x);
+      });
+    })
+    batch.execute().then(function() {
 
     });
 

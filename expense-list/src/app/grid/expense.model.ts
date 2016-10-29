@@ -1,6 +1,3 @@
-/**
- * Created by Merlin on 2016-10-25.
- */
 export class Expense {
   id:number;
   title : string;
