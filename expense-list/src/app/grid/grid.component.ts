@@ -16,15 +16,22 @@ export class GridComponent implements OnInit {
   depenseListDocuments:any;
   private gridOptions: GridOptions;
   rowData;
-  private columnDefs: any[];
+  private columnDefs : any[];
   private rowCount: string;
 
   constructor() {
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
       {headerName: 'Action', template: '<div style="width: 100%" data-action-type="openItem">Ouvrir</div>', width: 80},
-      {headerName: 'Id', field: 'Id', width: 50},
-      {headerName: 'Prix', field: 'Prix', width: 50},
+      {headerName: 'Id', field: 'id', width: 50},
+      {headerName: 'Prix', field: 'price', width: 100},
+      {headerName: 'Validé', field: 'validated', width: 100},
+      {headerName: 'Gestionnaire', field: 'manager', width: 100},
+      {headerName: 'Date', field: 'date', width: 100},
+      {headerName: 'Année', field: 'year', width: 100},
+      {headerName: 'Fournisseur', field: 'providerId', width: 100},
+      {headerName: 'Logement', field: 'flat', width: 100},
+      {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
     ];
 
   }
@@ -89,7 +96,11 @@ export class GridComponent implements OnInit {
         if(item.TaxesCategory){
           x.taxCategory = item.TaxesCategory.Label;
         }
+
+
         this.Expenses.push(x);
+        this.rowData = this.Expenses;
+        this.gridOptions.rowData = this.rowData
       });
 
       console.log(this.Expenses);
