@@ -2,20 +2,13 @@
 <link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/theme-fresh.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://appsforoffice.microsoft.com/fabric/fabric-core/4.0.0/fabric.min.css">
 <link rel="stylesheet" href="https://appsforoffice.microsoft.com/fabric/fabric-js/1.0.0/fabric.components.min.css">
-
-
-<style>
-  div.validated-true{
-    background-color: green;
-  }
-  div.validated-false{
-    background-color: red;
-  }
-</style>
-
-
-
 <div class="uma-app">
+  <input placeholder="Filtre..." type="text"
+         onpaste="onFilterChanged($event)"
+         oninput="onFilterChanged($event)"
+         onchange="onFilterChanged($event)"
+         onkeydown="onFilterChanged($event)"
+         onkeyup="onFilterChanged($event)"/>
   <ag-grid-ng2 #agGrid class="ag-fresh" style="width: 100%;"
 
                [gridOptions]="gridOptions"

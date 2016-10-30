@@ -27,24 +27,23 @@ export class GridComponent implements OnInit {
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
       {headerName: 'Action', template: '<div style="width: 100%" data-action-type="openItem">Ouvrir</div>', width: 80},
-      {headerName: 'Type', field: 'type', width: 50},
-      {headerName: 'Id', field: 'id', width: 50},
-      {headerName: 'Prix', field: 'price', width: 100},
       {headerName: 'Titre', field: 'title', width: 100},
-      {headerName: 'Validé', field: 'validated', width: 90,
+      {headerName: 'Type', field: 'type', width: 70},
+      {headerName: 'Prix', field: 'price', width: 100},
+      {
+        headerName: 'Validé', field: 'validated', width: 90,
         cellClassRules: {
           'validated-true': 'x == true',
-          'validated-false': 'x == false'
+          'validated-false': 'x != true'
         }
       },
       {headerName: 'Gestionnaire', field: 'manager', width: 100},
-      {headerName: 'Date', field: 'date', width: 100},
+      {headerName: 'Date', field: 'date', width: 100, sort: 'desc'},
       {headerName: 'Année', field: 'year', width: 100},
       {headerName: 'Fournisseur', field: 'provider', width: 100},
       {headerName: 'Logement', field: 'flat', width: 100},
       {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
     ];
-
   }
 
   ngOnInit() {
@@ -180,7 +179,10 @@ export class GridComponent implements OnInit {
     });
 
   };
-
+  private onFilterChanged($event) {
+    console.log('onFilterChanged');
+    this.gridOptions.api.setQuickFilter($event.target.value);
+  }
   private calculateRowCount() {
 
     if (this.gridOptions.api && this.rowData) {
@@ -190,7 +192,6 @@ export class GridComponent implements OnInit {
       this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }
   }
-
   private setDefaultFilter() {
     /*    this.rowDataFiltered = _.filter(this.rowData, row => {
      return row.CSBJStatut != 'Complété';
@@ -206,7 +207,7 @@ export class GridComponent implements OnInit {
   }
 
   private onRowClicked($event) {
-    // console.log('onRowClicked: ' + $event.node.data.name);
+    console.log('onRowClicked: ' + $event);
     if ($event.event.target !== undefined) {
       let data = $event.data;
       // TODO PB - let actionType = $event.event.target.getAttribute("data-action-type");
