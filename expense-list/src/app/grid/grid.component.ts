@@ -176,7 +176,7 @@ export class GridComponent implements OnInit {
         }
       });
     });
-console.log('toto')
+
   };
 
   private calculateRowCount() {
