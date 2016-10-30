@@ -60,15 +60,11 @@ export class GridComponent implements OnInit {
         x.created = item.Created;
         x.modified = item.Modified;
         x.date = item.Date1;
-
         x.authorId = item.AuthorId;
         x.providerId = item.FournisseursId;
         x.title = item.Title;
         x.manager = item.GestionnairesChoice;
-        if (item.odata) {
-          x.relativeEditLink = item.odata.editLink;
-        }
-
+        x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
         if (x.date != undefined) {
           x.year = parseInt(x.date.substr(0, 4));
         }
@@ -104,16 +100,11 @@ export class GridComponent implements OnInit {
         x.authorId = item.AuthorId;
         x.providerId = item.FournisseursId;
         x.title = item.Title;
-
-
+        x.manager = item.GestionnairesChoice;
+        x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Lists/depenses/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
         if (x.date != undefined) {
           x.year = parseInt(x.date.substr(0, 4));
         }
-        if (item.odata) {
-          x.relativeEditLink = item.odata.editLink;
-        }
-        x.manager = item.GestionnairesChoice;
-
         if (item.Logements) {
           x.flatId = item.Logements.Label;
         }
@@ -207,7 +198,8 @@ export class GridComponent implements OnInit {
   }
 
   private onRowClicked($event) {
-    console.log('onRowClicked: ' + $event);
+    console.log('onRowClicked: ');
+    console.log($event);
     if ($event.event.target !== undefined) {
       let data = $event.data;
       // TODO PB - let actionType = $event.event.target.getAttribute("data-action-type");
@@ -219,12 +211,9 @@ export class GridComponent implements OnInit {
        }*/
     }
   }
-
   public openItem(data: any) {
-    // console.log("View action clicked", data);
-    // this.router.navigate(['engagement', {currentID: data.notInModel.Id}]);
+    window.location.href = data.relativeEditLink;
   }
-
   private onQuickFilterChanged($event) {
     this.gridOptions.api.setQuickFilter($event.target.value);
   }
