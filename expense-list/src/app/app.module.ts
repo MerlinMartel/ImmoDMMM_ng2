@@ -6,11 +6,13 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
 import {AgGridModule} from "ag-grid-ng2";
+import { ImpotComponent } from './impot/impot.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GridComponent
+    GridComponent,
+    ImpotComponent
   ],
   imports: [
     BrowserModule,

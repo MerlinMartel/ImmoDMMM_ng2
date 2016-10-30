@@ -31,7 +31,12 @@ export class GridComponent implements OnInit {
       {headerName: 'Id', field: 'id', width: 50},
       {headerName: 'Prix', field: 'price', width: 100},
       {headerName: 'Titre', field: 'title', width: 100},
-      {headerName: 'Validé', field: 'validated', width: 100},
+      {headerName: 'Validé', field: 'validated', width: 90,
+        cellClassRules: {
+          'validated-true': 'x == true',
+          'validated-false': 'x == false'
+        }
+      },
       {headerName: 'Gestionnaire', field: 'manager', width: 100},
       {headerName: 'Date', field: 'date', width: 100},
       {headerName: 'Année', field: 'year', width: 100},
@@ -134,7 +139,6 @@ export class GridComponent implements OnInit {
         x.title = item.Title;
         this.providers.push(x);
       });
-      console.log(this.providers)
     });
     pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).inBatch(batch).get().then(res => {
       _.map(res, item => {
@@ -146,7 +150,6 @@ export class GridComponent implements OnInit {
         x.term1036 = item.Term1036;
         this.taxonomyHiddenList.push(x);
       });
-      console.log(this.taxonomyHiddenList);
     });
     batch.execute().then(() => {
       console.log('everything is loaded !!!');
@@ -170,7 +173,6 @@ export class GridComponent implements OnInit {
         let providerItemFiltered = _.filter(this.providers, (providerItem) => {
           return providerItem.id == expenseItem.providerId;
         });
-        console.log(providerItemFiltered);
         if (providerItemFiltered.length > 0) {
           expenseItem.provider = providerItemFiltered[0].title;
         }
