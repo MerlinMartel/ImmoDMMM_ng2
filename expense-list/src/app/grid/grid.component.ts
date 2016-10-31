@@ -6,24 +6,25 @@ import {GridOptions} from 'ag-grid/main';
 import {Expense} from './expense.model';
 import {Provider} from './provider.model';
 import {TaxonomyHiddenList} from './taxonomyHiddenList.model';
+import {SpDataService} from "../spdata.service";
 
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.css']
+  styleUrls: ['./grid.component.css'],
+  providers: [SpDataService]
 })
 export class GridComponent implements OnInit {
   expenses: [Expense] = [];
   rowData: [Expense] = [];
-  providers: [Provider] = [];
-  taxonomyHiddenList: [TaxonomyHiddenList] = [];
-  depenseListItems: any;
-  depenseListDocuments: any;
   private gridOptions: GridOptions;
   private columnDefs: any[];
   private rowCount: string;
+  constructor(private spDataService: SpDataService) {
 
-  constructor() {
+  }
+
+  ngOnInit() {
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
       {headerName: 'Action', template: '<div style="width: 100%" data-action-type="openItem">Ouvrir</div>', width: 80},
@@ -44,132 +45,14 @@ export class GridComponent implements OnInit {
       {headerName: 'Logement', field: 'flat', width: 100},
       {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
     ];
+    this.gridOptions.rowData = this.rowData;
+    this.getAllExpenses();
+  };
+  getAllExpenses() {
+    this.expenses = this.spDataService.getAllExpenses();
   }
 
-  ngOnInit() {
-    let batch = pnp.sp.createBatch();
-    this.gridOptions.rowData = this.rowData;
-    pnp.sp.web.lists.getByTitle('Depenses').items.top(10000).inBatch(batch).get().then(res => {
-      this.depenseListItems = res;
-      _.map(this.depenseListItems, item => {
-        let x = new Expense;
-        x.type = 'Document';
-        x.price = item.Prix;
-        x.validated = item.Valide;
-        x.id = item.Id;
-        x.created = item.Created;
-        x.modified = item.Modified;
-        x.date = item.Date1;
-        x.authorId = item.AuthorId;
-        x.providerId = item.FournisseursId;
-        x.title = item.Title;
-        x.manager = item.GestionnairesChoice;
-        x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
-        if (x.date != undefined) {
-          x.year = parseInt(x.date.substr(0, 4));
-        }
 
-        if (item.Logements) {
-          x.flatId = item.Logements.Label;
-        }
-        if (item.TaxesCategory) {
-          x.taxCategoryId = item.TaxesCategory.Label;
-        }
-
-
-        this.expenses.push(x);
-      });
-
-      if (this.rowData.length > 1) {
-        this.rowData.concat(this.expenses);
-      } else {
-        this.rowData = this.expenses;
-      }
-    });
-    pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(10000).inBatch(batch).get().then(res => {
-      this.depenseListDocuments = res;
-      _.map(this.depenseListDocuments, item => {
-        let x = new Expense;
-        x.type = 'item';
-        x.price = item.Montant;
-        x.validated = item.Valid_x00e9_;
-        x.id = item.Id;
-        x.created = item.Created;
-        x.modified = item.Modified;
-        x.date = item.Date;
-        x.authorId = item.AuthorId;
-        x.providerId = item.FournisseursId;
-        x.title = item.Title;
-        x.manager = item.GestionnairesChoice;
-        x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Lists/depenses/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
-        if (x.date != undefined) {
-          x.year = parseInt(x.date.substr(0, 4));
-        }
-        if (item.Logements) {
-          x.flatId = item.Logements.Label;
-        }
-        if (item.TaxesCategory) {
-          x.taxCategoryId = item.TaxesCategory.Label;
-        }
-
-
-        this.expenses.push(x);
-
-      });
-      if (this.rowData.length > 1) {
-        this.rowData.concat(this.expenses);
-      } else {
-        this.rowData = this.expenses;
-      }
-    });
-    pnp.sp.site.rootWeb.lists.getByTitle('Fournisseurs').items.top(5000).inBatch(batch).get().then(res => {
-      _.map(res, item => {
-        let x = new Provider;
-        x.id = item.Id;
-        x.title = item.Title;
-        this.providers.push(x);
-      });
-    });
-    pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).inBatch(batch).get().then(res => {
-      _.map(res, item => {
-        let x = new TaxonomyHiddenList;
-        x.id = item.Id;
-        x.path1033 = item.Path1033;
-        x.path1036 = item.Path1036;
-        x.term1033 = item.Term1033;
-        x.term1036 = item.Term1036;
-        this.taxonomyHiddenList.push(x);
-      });
-    });
-    batch.execute().then(() => {
-      console.log('everything is loaded !!!');
-      _.map(this.expenses, (expenseItem) => {
-        let taxoItemFiltered = _.filter(this.taxonomyHiddenList, (taxoItem) => {
-          return taxoItem.id == expenseItem.flatId;
-        });
-        if (taxoItemFiltered.length > 0) {
-          expenseItem.flat = taxoItemFiltered[0].term1036;
-        }
-      });
-      _.map(this.expenses, (expenseItem) => {
-        let taxoItemFiltered = _.filter(this.taxonomyHiddenList, (taxoItem) => {
-          return taxoItem.id == expenseItem.taxCategoryId;
-        });
-        if (taxoItemFiltered.length > 0) {
-          expenseItem.taxCategory = taxoItemFiltered[0].term1036;
-        }
-      });
-      _.map(this.expenses, (expenseItem) => {
-        let providerItemFiltered = _.filter(this.providers, (providerItem) => {
-          return providerItem.id == expenseItem.providerId;
-        });
-        if (providerItemFiltered.length > 0) {
-          expenseItem.provider = providerItemFiltered[0].title;
-        }
-      });
-    });
-
-  };
   private onFilterChanged($event) {
     console.log('onFilterChanged');
     this.gridOptions.api.setQuickFilter($event.target.value);
@@ -211,6 +94,11 @@ export class GridComponent implements OnInit {
        }*/
     }
   }
+  private onCellClicked($event) {
+    console.log('onCellClicked: ');
+  }
+
+
   public openItem(data: any) {
     window.location.href = data.relativeEditLink;
   }

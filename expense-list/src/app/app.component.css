@@ -6,3 +6,8 @@
 #s4-workspace {
   overflow: hidden !important;
 }
+.menu{
+  margin-bottom:20px;
+  padding-right: 30px;
+  font-size: 20px;
+}
