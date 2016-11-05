@@ -1,12 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
-import pnp from 'sp-pnp-js';
-import * as _ from 'lodash';
 import {GridOptions} from 'ag-grid/main';
-import {Expense} from './expense.model';
-import {Provider} from './provider.model';
-import {TaxonomyHiddenList} from './taxonomyHiddenList.model';
-import {SpDataService} from "../spdata.service";
+import {Expense} from '../model/expense.model';
+import {SpDataService} from '../sp-data/spdata.service';
 
 @Component({
   selector: 'app-grid',
@@ -15,7 +11,6 @@ import {SpDataService} from "../spdata.service";
   providers: [SpDataService]
 })
 export class GridComponent implements OnInit {
-  expenses: [Expense] = [];
   rowData: [Expense] = [];
   private gridOptions: GridOptions;
   private columnDefs: any[];
@@ -24,10 +19,18 @@ export class GridComponent implements OnInit {
 
   }
 
+
+  /*
+        cellRenderer : function(params) {
+   console.log(params);
+   }
+  * */
+
   ngOnInit() {
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
-      {headerName: 'Action', template: '<div style="width: 100%" data-action-type="openItem">Ouvrir</div>', width: 80},
+      { headerName: 'Action', template: 'Ouvrir',
+        width: 80},
       {headerName: 'Titre', field: 'title', width: 100},
       {headerName: 'Type', field: 'type', width: 70},
       {headerName: 'Prix', field: 'price', width: 100},
@@ -46,12 +49,10 @@ export class GridComponent implements OnInit {
       {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
     ];
     this.gridOptions.rowData = this.rowData;
-    this.getAllExpenses();
+    this.spDataService.getAllExpenses().subscribe(data => {;
+      this.rowData = data;
+    }, err => { console.log(err); });
   };
-  getAllExpenses() {
-    this.expenses = this.spDataService.getAllExpenses();
-  }
-
 
   private onFilterChanged($event) {
     console.log('onFilterChanged');
@@ -71,15 +72,12 @@ export class GridComponent implements OnInit {
      return row.CSBJStatut != 'Complété';
      });*/
   }
-
   private onModelUpdated() {
     this.calculateRowCount();
   }
-
   private onReady() {
     this.calculateRowCount();
   }
-
   private onRowClicked($event) {
     console.log('onRowClicked: ');
     console.log($event);
@@ -97,13 +95,10 @@ export class GridComponent implements OnInit {
   private onCellClicked($event) {
     console.log('onCellClicked: ');
   }
-
-
   public openItem(data: any) {
     window.location.href = data.relativeEditLink;
   }
   private onQuickFilterChanged($event) {
     this.gridOptions.api.setQuickFilter($event.target.value);
   }
-
 }

@@ -1,20 +1,23 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 import pnp from 'sp-pnp-js';
 import * as _ from 'lodash';
-import {Expense} from "./grid/expense.model";
-import {Provider} from "./grid/provider.model";
-import {TaxonomyHiddenList} from "./grid/taxonomyHiddenList.model";
+import {Expense} from '../model/expense.model';
+import {Provider} from '../model/provider.model';
+import {TaxonomyHiddenList} from '../model/taxonomyHiddenList.model';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class SpDataService {
 
-  constructor() { }
-  getAllExpenses() {
+  constructor() {
+  }
+  getAllExpenses(): Observable {
     console.log('SpDataService.getAllExpenses');
-      let expenses: [Expense];
-      let providers: [Provider];
-      let taxonomyHiddenList: [TaxonomyHiddenList];
+    var getAllExObservable =  new Observable(observer => {
+      let expenses: [Expense] = [];
+      let providers: [Provider] = [];
+      let taxonomyHiddenList: [TaxonomyHiddenList] = [];
       let batch = pnp.sp.createBatch();
       pnp.sp.web.lists.getByTitle('Depenses').items.top(10000).inBatch(batch).get().then(res => {
         _.map(res, item => {
@@ -106,12 +109,18 @@ export class SpDataService {
             expenseItem.provider = providerItemFiltered[0].title;
           }
         });
+        observer.next(expenses);
+        observer.complete();
       });
-      return expenses;
+
+    });
+    return getAllExObservable;
   }
-  getProviders(){
+
+  getProviders() {
 
   }
+
   getTaxonomyHiddenList() {
     return new Promise((resolve, reject) => {
       var taxonomyHiddenList: [TaxonomyHiddenList];

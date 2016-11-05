@@ -6,9 +6,10 @@ import { RouterModule }   from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
-import {AgGridModule} from "ag-grid-ng2";
+import { AgGridModule } from 'ag-grid-ng2';
 import { ImpotComponent } from './impot/impot.component';
-import {appRoutes} from "./app.routing";
+import { appRoutes } from './app.routing';
+import {SpDataService} from './sp-data/spdata.service';
 
 @NgModule({
   declarations: [
@@ -21,9 +22,9 @@ import {appRoutes} from "./app.routing";
     FormsModule,
     HttpModule,
     AgGridModule.withNg2ComponentSupport(),
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [SpDataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
