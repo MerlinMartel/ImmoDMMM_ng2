@@ -1,12 +1,13 @@
 <div>{{test}}</div>
 <div class="container">
   <div class="row">
-    <div class="cell"></div>
-    <div class="cell">revenue brut</div>
-    <div class="cell">montatn....</div>
+    <div class="cell">Titre</div>
+    <div class="cell"># taxe catégorie</div>
+    <div class="cell">Sommes</div>
   </div>
   <div *ngFor="let taxeCategory of taxesCategory" class="row">
     <div class="cell">{{taxeCategory.title}}</div>
     <div class="cell">{{taxeCategory.number}}</div>
+    <div class="cell">{{taxeCategory.sum}}</div>
   </div>
 </div>

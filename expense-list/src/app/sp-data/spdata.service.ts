@@ -98,9 +98,7 @@ export class SpDataService {
       });
       batch.execute().then(() => {
         console.log('everything is loaded !!!');
-        console.log(that.taxonomyHiddenList);
         _.map(that.expenses, (expenseItem) => {
-          console.log('process taxo 1');
           let taxoItemFiltered = _.filter(that.taxonomyHiddenList, (taxoItem) => {
             return taxoItem.id == expenseItem.flatId;
           });

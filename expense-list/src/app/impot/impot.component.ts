@@ -21,24 +21,6 @@ export class ImpotComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.spDataService.getAllExpenses().subscribe(data => {
-      console.log(data);
-      this.expenses = data;
-
-      // this.test3 = _(this.expenses).filter()
-      let x = [1, 2, 2];
-      let y = _(x).uniq().map((i) => {return i + 10 }).reverse().value();
-      console.log(y);
-      this.test = _.filter(this.expenses, (expense: Expense) => {
-        return expense.taxCategoryId == 23;
-      });
-      this.test2 = _.reduce(this.test, function (sum, expense: Expense) {
-        return sum + expense.price;
-      }, 0);
-      console.log(this.test);
-      console.log(this.test2);
-
-    }, err => { console.log(err); });
     this.taxesCategory = [
       {
         title: 'Publicité',
@@ -78,6 +60,21 @@ export class ImpotComponent implements OnInit {
         taxeCategory: 38
       },
     ];
-  }
+    this.spDataService.getAllExpenses().subscribe(data => {
+      console.log(data);
+      this.expenses = data;
+      _.map(this.taxesCategory, (taxeCategory) => {
+        taxeCategory.sum = this.getPriceSumFromExpenses(data, taxeCategory.taxeCategory);
+      });
+      console.log(this.taxesCategory);
+    }, err => { console.log(err); });
 
+  }
+  getPriceSumFromExpenses(expenses: [Expense], taxCategoryId: number) {
+    return _(expenses)
+      .filter((expense: Expense) => { return expense.taxCategoryId == taxCategoryId; })
+      .reduce((sum, expense: Expense) => {
+        return sum + expense.price;
+      }, 0);
+  }
 }
