@@ -9,15 +9,18 @@ import {Observable} from 'rxjs';
 
 @Injectable()
 export class SpDataService {
+  expenses: [Expense] = [];
+  providers: [Provider] = [];
+  taxonomyHiddenList: [TaxonomyHiddenList] = [];
 
   constructor() {
   }
   getAllExpenses(): Observable {
+
+    var that = this;
     console.log('SpDataService.getAllExpenses');
-    var getAllExObservable =  new Observable(observer => {
-      let expenses: [Expense] = [];
-      let providers: [Provider] = [];
-      let taxonomyHiddenList: [TaxonomyHiddenList] = [];
+    let getAllExObservable =  new Observable(observer => {
+
       let batch = pnp.sp.createBatch();
       pnp.sp.web.lists.getByTitle('Depenses').items.top(10000).inBatch(batch).get().then(res => {
         _.map(res, item => {
@@ -43,7 +46,7 @@ export class SpDataService {
           if (item.TaxesCategory) {
             x.taxCategoryId = item.TaxesCategory.Label;
           }
-          expenses.push(x);
+          that.expenses.push(x);
         });
       });
       pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(10000).inBatch(batch).get().then(res => {
@@ -70,7 +73,7 @@ export class SpDataService {
           if (item.TaxesCategory) {
             x.taxCategoryId = item.TaxesCategory.Label;
           }
-          expenses.push(x);
+          that.expenses.push(x);
 
         });
       });
@@ -79,37 +82,49 @@ export class SpDataService {
           let x = new Provider;
           x.id = item.Id;
           x.title = item.Title;
-          providers.push(x);
+          that.providers.push(x);
         });
       });
-
+      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).get().then(res => {
+        _.map(res, item => {
+          let x = new TaxonomyHiddenList;
+          x.id = item.Id;
+          x.path1033 = item.Path1033;
+          x.path1036 = item.Path1036;
+          x.term1033 = item.Term1033;
+          x.term1036 = item.Term1036;
+          that.taxonomyHiddenList.push(x);
+        });
+      });
       batch.execute().then(() => {
         console.log('everything is loaded !!!');
-        _.map(expenses, (expenseItem) => {
-          let taxoItemFiltered = _.filter(taxonomyHiddenList, (taxoItem) => {
+        console.log(that.taxonomyHiddenList);
+        _.map(that.expenses, (expenseItem) => {
+          console.log('process taxo 1');
+          let taxoItemFiltered = _.filter(that.taxonomyHiddenList, (taxoItem) => {
             return taxoItem.id == expenseItem.flatId;
           });
           if (taxoItemFiltered.length > 0) {
             expenseItem.flat = taxoItemFiltered[0].term1036;
           }
         });
-        _.map(expenses, (expenseItem) => {
-          let taxoItemFiltered = _.filter(taxonomyHiddenList, (taxoItem) => {
+        _.map(that.expenses, (expenseItem) => {
+          let taxoItemFiltered = _.filter(that.taxonomyHiddenList, (taxoItem) => {
             return taxoItem.id == expenseItem.taxCategoryId;
           });
           if (taxoItemFiltered.length > 0) {
             expenseItem.taxCategory = taxoItemFiltered[0].term1036;
           }
         });
-        _.map(expenses, (expenseItem) => {
-          let providerItemFiltered = _.filter(providers, (providerItem) => {
+        _.map(that.expenses, (expenseItem) => {
+          let providerItemFiltered = _.filter(that.providers, (providerItem) => {
             return providerItem.id == expenseItem.providerId;
           });
           if (providerItemFiltered.length > 0) {
             expenseItem.provider = providerItemFiltered[0].title;
           }
         });
-        observer.next(expenses);
+        observer.next(that.expenses);
         observer.complete();
       });
 
