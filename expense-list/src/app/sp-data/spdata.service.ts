@@ -9,14 +9,14 @@ import {Observable} from 'rxjs';
 
 @Injectable()
 export class SpDataService {
-  expenses: [Expense] = [];
-  providers: [Provider] = [];
-  taxonomyHiddenList: [TaxonomyHiddenList] = [];
+  expenses: Expense[] = [];
+  providers: Provider[] = [];
+  taxonomyHiddenList: TaxonomyHiddenList[] = [];
 
   constructor() {
   }
-  getAllExpenses(year?: number): Observable {
-    this.expenses = []; //Reset Array, because of the push...it was accumulating
+  getAllExpenses(year?: number): Observable<[Expense]> {
+    this.expenses = []; // Reset Array, because of the push...it was accumulating
     var that = this;
     console.log('SpDataService.getAllExpenses');
     let getAllExObservable =  new Observable(observer => {
