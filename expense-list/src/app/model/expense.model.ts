@@ -12,9 +12,9 @@ export class Expense {
   modified: string;
   providerId: number;
   provider: string;
-  flatId: string;
+  flatId: number;
   flat: string;
-  taxCategoryId: string;
+  taxCategoryId: number;
   taxCategory: string;
   relativeEditLink: string;
   type: string;
