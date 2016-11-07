@@ -15,40 +15,84 @@ export class SpDataService {
 
   constructor() {
   }
-  getAllExpenses(): Observable {
+  getAllExpenses(year?: number): Observable {
 
     var that = this;
     console.log('SpDataService.getAllExpenses');
     let getAllExObservable =  new Observable(observer => {
 
+
       let batch = pnp.sp.createBatch();
-      pnp.sp.web.lists.getByTitle('Depenses').items.top(10000).inBatch(batch).get().then(res => {
-        _.map(res, item => {
-          let x = new Expense;
-          x.type = 'Document';
-          x.price = item.Prix;
-          x.validated = item.Valide;
-          x.id = item.Id;
-          x.created = item.Created;
-          x.modified = item.Modified;
-          x.date = item.Date1;
-          x.authorId = item.AuthorId;
-          x.providerId = item.FournisseursId;
-          x.title = item.Title;
-          x.manager = item.GestionnairesChoice;
-          x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
-          if (x.date != undefined) {
-            x.year = parseInt(x.date.substr(0, 4));
-          }
-          if (item.Logements) {
-            x.flatId = item.Logements.Label;
-          }
-          if (item.TaxesCategory) {
-            x.taxCategoryId = item.TaxesCategory.Label;
-          }
-          that.expenses.push(x);
+      if (year !== undefined) {
+        console.log('year is defined');
+        var tempyear = 2014;
+/*
+        var a = new Date(2011, 01, 01).toISOString();
+        var b = new Date(2011, 11, 31).toISOString();
+        console.log(a);
+        console.log(b);
+*/
+        let dateFilterStringForSpecificYear = "Date1 gt '" + year + "-01-01T00:00:00Z' and Date1 lt '" + year + "-12-31T00:00:00Z'";
+        console.log(dateFilterStringForSpecificYear);
+        pnp.sp.web.lists.getByTitle('Depenses').items.filter(dateFilterStringForSpecificYear).top(5000).inBatch(batch).get().then(res => {
+          console.log(res);
+          _.map(res, item => {
+            let x = new Expense;
+            x.type = 'Document';
+            x.price = item.Prix;
+            x.validated = item.Valide;
+            x.id = item.Id;
+            x.created = item.Created;
+            x.modified = item.Modified;
+            x.date = item.Date1;
+            x.authorId = item.AuthorId;
+            x.providerId = item.FournisseursId;
+            x.title = item.Title;
+            x.manager = item.GestionnairesChoice;
+            x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
+            if (x.date != undefined) {
+              x.year = parseInt(x.date.substr(0, 4));
+            }
+            if (item.Logements) {
+              x.flatId = item.Logements.Label;
+            }
+            if (item.TaxesCategory) {
+              x.taxCategoryId = item.TaxesCategory.Label;
+            }
+            that.expenses.push(x);
+          });
         });
-      });
+      } else {
+        console.log('year is NOT defined');
+        pnp.sp.web.lists.getByTitle('Depenses').items.top(10000).inBatch(batch).get().then(res => {
+          _.map(res, item => {
+            let x = new Expense;
+            x.type = 'Document';
+            x.price = item.Prix;
+            x.validated = item.Valide;
+            x.id = item.Id;
+            x.created = item.Created;
+            x.modified = item.Modified;
+            x.date = item.Date1;
+            x.authorId = item.AuthorId;
+            x.providerId = item.FournisseursId;
+            x.title = item.Title;
+            x.manager = item.GestionnairesChoice;
+            x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
+            if (x.date != undefined) {
+              x.year = parseInt(x.date.substr(0, 4));
+            }
+            if (item.Logements) {
+              x.flatId = item.Logements.Label;
+            }
+            if (item.TaxesCategory) {
+              x.taxCategoryId = item.TaxesCategory.Label;
+            }
+            that.expenses.push(x);
+          });
+        });
+      }
+      /*
       pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(10000).inBatch(batch).get().then(res => {
         _.map(res, item => {
           let x = new Expense;
@@ -77,6 +121,7 @@ export class SpDataService {
 
         });
       });
+      */
       pnp.sp.site.rootWeb.lists.getByTitle('Fournisseurs').items.top(5000).inBatch(batch).get().then(res => {
         _.map(res, item => {
           let x = new Provider;

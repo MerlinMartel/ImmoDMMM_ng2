@@ -8,7 +8,7 @@ import { GridComponent } from './grid/grid.component';
 import { AgGridModule } from 'ag-grid-ng2';
 import { ImpotComponent } from './impot/impot.component';
 import { routing, appRoutingProviders }  from './routing';
-import {SpDataService} from './sp-data/spdata.service';
+import { SpDataService } from './sp-data/spdata.service';
 
 @NgModule({
   declarations: [

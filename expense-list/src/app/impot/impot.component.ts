@@ -5,6 +5,7 @@ import {SpDataService} from '../sp-data/spdata.service';
 import {Expense} from '../model/expense.model';
 import * as _ from 'lodash';
 
+
 @Component({
   selector: 'app-impot',
   templateUrl: './impot.component.html',
@@ -21,6 +22,11 @@ export class ImpotComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.spDataService.getAllExpenses(2015).subscribe(data => {
+      console.log('2016 data');
+      console.log(data);
+    });
     this.taxesCategory = [
       {
         title: 'Publicité',
@@ -60,14 +66,16 @@ export class ImpotComponent implements OnInit {
         taxeCategory: 38
       },
     ];
+    /*
     this.spDataService.getAllExpenses().subscribe(data => {
-      console.log(data);
+      // console.log(data);
       this.expenses = data;
       _.map(this.taxesCategory, (taxeCategory) => {
         taxeCategory.sum = this.getPriceSumFromExpenses(data, taxeCategory.taxeCategory);
       });
-      console.log(this.taxesCategory);
+      // console.log(this.taxesCategory);
     }, err => { console.log(err); });
+*/
 
   }
   getPriceSumFromExpenses(expenses: [Expense], taxCategoryId: number) {

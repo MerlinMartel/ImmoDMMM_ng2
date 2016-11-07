@@ -24,6 +24,7 @@
     "ag-grid-ng2": "^6.2.0",
     "core-js": "^2.4.1",
     "lodash": "^4.16.4",
+    "moment": "^2.15.2",
     "rxjs": "5.0.0-beta.12",
     "sp-pnp-js": "^1.0.5",
     "ts-helpers": "^1.1.1",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/jasmine": "^2.2.30",
+    "@types/moment": "^2.13.0",
     "@types/node": "^6.0.42",
     "angular-cli": "1.0.0-beta.18",
     "codelyzer": "1.0.0-beta.1",

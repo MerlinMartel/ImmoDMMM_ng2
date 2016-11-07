@@ -50,7 +50,6 @@ export class GridComponent implements OnInit {
     ];
     this.gridOptions.rowData = this.rowData;
     this.spDataService.getAllExpenses().subscribe(data => {
-      console.log(data);
       this.rowData = data;
     }, err => { console.log(err); });
   };
