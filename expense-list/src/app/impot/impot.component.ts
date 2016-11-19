@@ -68,7 +68,7 @@ export class ImpotComponent implements OnInit {
       },
       {
         title: 'Entretien et réparation',
-        number: 8871,
+        number: 8960,
         taxeCategory: 21,
         sum : 0
       },
@@ -104,7 +104,7 @@ export class ImpotComponent implements OnInit {
       },
       {
         title: 'Autres dépenses',
-        number: 9220,
+        number: 9270,
         taxeCategory: 0,
         sum : 0
       }

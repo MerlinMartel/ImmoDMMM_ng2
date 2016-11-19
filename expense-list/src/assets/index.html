@@ -2,6 +2,15 @@
   window.Zone = undefined;
 </script>
 
+<!--Mettre le base URL comme l'URL de SharePoint courante. Par défault, c'est "/", mais SharePoint est mélangé...-->
+<script>
+
+  var fullUrl = document.location.href;
+  spUrl = fullUrl.substring(0, fullUrl.indexOf('.aspx') + 5);
+  document.write('<base href="' + spUrl + '" />');
+
+</script>
+
 <style>
   .validated-true{
     background-color: green;
@@ -12,11 +21,7 @@
   .ag-header-cell-filtered {
     background-color: #e5e5e5;
   }
-
 </style>
-
-<base href="">
-
 
 <app-root>Loading...</app-root>
 <script type="text/javascript" src="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/inline.js"></script>

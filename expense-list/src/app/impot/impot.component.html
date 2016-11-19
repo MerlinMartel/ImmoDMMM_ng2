@@ -1,5 +1,5 @@
 <h1>Année en cours : {{selectedYear}}</h1>
-<h2 *ngIf="expenses">Nombre d'items considéré : {{expenses.length}}</h2>
+
 <select (change)="loadDataForYear($event.target.value)">
   <option *ngFor="let year of availableYears" [selected]="selectedYear">{{year}}</option>
 </select>
@@ -8,11 +8,22 @@
   <div class="row">
     <div class="cell">Titre</div>
     <div class="cell"># taxe catégorie</div>
-    <div class="cell">Sommes</div>
+    <div class="cell">Dépenses totales</div>
+    <div class="cell">% personnel DM</div>
+    <div class="cell">Partie personnel DM</div>
+    <div class="cell">% personnel MM</div>
+    <div class="cell">Partie personnel MM</div>
   </div>
   <div *ngFor="let taxeCategory of taxesCategory" class="row">
     <div class="cell">{{taxeCategory.title}}</div>
     <div class="cell">{{taxeCategory.number}}</div>
-    <div class="cell">{{taxeCategory.sum}}</div>
+    <div class="cell taxCategory">{{taxeCategory.sum}}</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
   </div>
 </div>
+
+<br>
+<h2 *ngIf="expenses">Nombre d'items considéré : {{expenses.length}}</h2>

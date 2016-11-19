@@ -1,5 +1,5 @@
 <nav class="menu">
-  <a routerLink="/expenses">Dépenses</a>
-  <a routerLink="/taxes">Impôt</a>
+  <a [routerLink]="['/']" [routerLinkActive]="['is-active']">Dépenses</a>
+  <a [routerLink]="['/taxes']" [routerLinkActive]="['is-active']">Impôt</a>
 </nav>
 <router-outlet></router-outlet>
