@@ -6,6 +6,7 @@ import {Expense} from '../model/expense.model';
 import {Provider} from '../model/provider.model';
 import {TaxonomyHiddenList} from '../model/taxonomyHiddenList.model';
 import {Observable} from 'rxjs';
+import {TaxesCategory} from "../model/taxesCategory.model";
 
 @Injectable()
 export class SpDataService {
@@ -15,7 +16,7 @@ export class SpDataService {
 
   constructor() {
   }
-  getAllExpenses(year?: number): Observable<[Expense]> {
+  getAllExpenses(year?: number): Observable<Expense[]> {
     this.expenses = []; // Reset Array, because of the push...it was accumulating
     var that = this;
     console.log('SpDataService.getAllExpenses');
@@ -27,31 +28,31 @@ export class SpDataService {
         console.log('year is defined');
         let dateFilterStringForSpecificYearDoc = "Date1 gt '" + year + "-01-01T00:00:00Z' and Date1 lt '" + year + "-12-31T00:00:00Z'";
         let dateFilterStringForSpecificYearItem = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
-        pnp.sp.web.lists.getByTitle('Depenses').items.filter(dateFilterStringForSpecificYearDoc).top(5000).inBatch(batch).get().then(res => {
+        pnp.sp.web.lists.getByTitle('Depenses').items.filter(dateFilterStringForSpecificYearDoc).top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesDoc(res);
         });
-        pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.filter(dateFilterStringForSpecificYearItem).top(5000).inBatch(batch).get().then(res => {
+        pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.filter(dateFilterStringForSpecificYearItem).top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesItem(res);
         });
       } else {
         console.log('year is NOT defined');
-        pnp.sp.web.lists.getByTitle('Depenses').items.top(5000).inBatch(batch).get().then(res => {
+        pnp.sp.web.lists.getByTitle('Depenses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesDoc(res);
         });
-        pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(5000).inBatch(batch).get().then(res => {
+        pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesItem(res);
         });
       }
-      pnp.sp.site.rootWeb.lists.getByTitle('Fournisseurs').items.top(5000).inBatch(batch).get().then(res => {
-        _.map(res, item => {
+      pnp.sp.site.rootWeb.lists.getByTitle('Fournisseurs').items.top(5000).inBatch(batch).get().then((res: any) => {
+        _.each(res, item => {
           let x = new Provider;
           x.id = item.Id;
           x.title = item.Title;
           that.providers.push(x);
         });
       });
-      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).get().then(res => {
-        _.map(res, item => {
+      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).get().then((res: any) => {
+        _.each(res, item => {
           let x = new TaxonomyHiddenList;
           x.id = item.Id;
           x.path1033 = item.Path1033;
@@ -94,12 +95,8 @@ export class SpDataService {
     });
     return getAllExObservable;
   }
-
-  getProviders() {
-
-  }
-  createObjectForDepensesDoc(res) {
-    _.map(res, item => {
+  createObjectForDepensesDoc(res: any) {
+    _.each(res, item => {
       let x = new Expense;
       x.type = 'Document';
       x.price = item.Prix;
@@ -125,8 +122,8 @@ export class SpDataService {
       this.expenses.push(x);
     });
   }
-  createObjectForDepensesItem(res) {
-    _.map(res, item => {
+  createObjectForDepensesItem(res: any) {
+    _.each(res, item => {
       let x = new Expense;
       x.type = 'item';
       x.price = item.Montant;
@@ -156,8 +153,8 @@ export class SpDataService {
   getTaxonomyHiddenList() {
     return new Promise((resolve, reject) => {
       var taxonomyHiddenList: [TaxonomyHiddenList];
-      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).get().then(res => {
-        _.map(res, item => {
+      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).get().then((res: any) => {
+        _.each(res, item => {
           let x = new TaxonomyHiddenList;
           x.id = item.Id;
           x.path1033 = item.Path1033;
@@ -170,5 +167,87 @@ export class SpDataService {
       });
     });
 
+  }
+  getTaxCategories(): Observable<TaxesCategory[]> {
+    let taxCatObservable =  new Observable(observer => {
+      var taxCatRaw =  [
+        {
+          title: 'Publicité',
+          number: 8521,
+          taxeCategory: 0
+        },
+        {
+          title: 'Assurances',
+          number: 8690,
+          taxeCategory: 18
+        },
+        {
+          title: 'Intérêts',
+          number: 8710,
+          taxeCategory: 0
+        },
+        {
+          title: 'Frais de bureau',
+          number: 8810,
+          taxeCategory: 0
+        },
+        {
+          title: 'Frais comptables, juridiques et autres honoraires',
+          number: 8860,
+          taxeCategory: 30
+        },
+        {
+          title: "Frais de gestion et d'administration",
+          number: 8871,
+          taxeCategory: 37
+        },
+        {
+          title: 'Entretien et réparation',
+          number: 8960,
+          taxeCategory: 21
+        },
+        {
+          title: 'Salaires, traitements et avantages',
+          number: 9060,
+          taxeCategory: 38
+        },
+        {
+          title: 'Impôt foncier',
+          number: 9180,
+          taxeCategory: 19
+        },
+        {
+          title: 'Frais de voyage',
+          number: 9200,
+          taxeCategory: 39
+        },
+        {
+          title: 'Service publics',
+          number: 9220,
+          taxeCategory: 32
+        },
+        {
+          title: 'Dépenses relatives aux véhicules à moteur',
+          number: 9281,
+          taxeCategory: 0
+        },
+        {
+          title: 'Autres dépenses',
+          number: 9270,
+          taxeCategory: 0
+        }
+      ];
+      var taxCategories: TaxesCategory[] = [];
+      _.each(taxCatRaw, item => {
+        let x = new TaxesCategory;
+        x.title = item.title;
+        x.number = item.number;
+        x.taxeCategory = item.taxeCategory;
+        taxCategories.push(x);
+      });
+      observer.next(taxCategories);
+      observer.complete();
+    });
+    return taxCatObservable;
   }
 }

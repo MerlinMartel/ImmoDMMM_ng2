@@ -14,14 +14,23 @@
     <div class="cell">% personnel MM</div>
     <div class="cell">Partie personnel MM</div>
   </div>
-  <div *ngFor="let taxeCategory of taxesCategory" class="row">
+  <div *ngFor="let taxeCategory of taxeCategories" class="row">
     <div class="cell">{{taxeCategory.title}}</div>
-    <div class="cell">{{taxeCategory.number}}</div>
-    <div class="cell taxCategory">{{taxeCategory.sum}}</div>
+    <div class="cell taxCategory">{{taxeCategory.number}}</div>
+    <div class="cell">{{taxeCategory.sum | number:'.0-2'}}</div>
+    <div class="cell">{{taxeCategory.percentagePersonalDM | number:'.0-2' | percent}}</div>
+    <div class="cell">{{taxeCategory.sumPersonalDM | number:'.0-2'}}</div>
+    <div class="cell">{{taxeCategory.percentagePersonalMM | number:'.0-2' | percent}}</div>
+    <div class="cell">{{taxeCategory.sumPersonalMM | number:'.0-2'}}</div>
+  </div>
+  <div class="row">
+    <div class="cell">Totaux</div>
     <div class="cell"></div>
+    <div class="cell">{{totalExpenses | number:'.0-2'}}</div>
     <div class="cell"></div>
+    <div class="cell">{{totalExpensesPersonelDM | number:'.0-2'}}</div>
     <div class="cell"></div>
-    <div class="cell"></div>
+    <div class="cell">{{totalExpensesPersonelMM | number:'.0-2'}}</div>
   </div>
 </div>
 

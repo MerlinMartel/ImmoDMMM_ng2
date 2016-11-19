@@ -13,134 +13,88 @@ import * as _ from 'lodash';
   styleUrls: ['impot.component.less']
 })
 export class ImpotComponent implements OnInit {
-  taxesCategory: TaxesCategory[];
+  taxeCategories: TaxesCategory[];
   expenses: Expense[];
   selectedYear: number;
   availableYears: number[];
+  percentageHousePersonalMerlin: number = 0.333333;
+  percentageHousePersonalDenise: number = 0;
+  totalExpenses: number = 0;
+  totalExpensesPersonelMM: number = 0;
+  totalExpensesPersonelDM: number = 0;
 
   constructor(private spDataService: SpDataService) {
+
+  }
+
+  ngOnInit() {
+
     this.selectedYear = new Date().getFullYear();
     this.availableYears = [];  // TODO : trouver une manière de faire ça plus élégant
     for (let i = 2010; i <= this.selectedYear; i++) {
       this.availableYears.push(i);
     }
-  }
-
-  ngOnInit() {
     this.loadDataForYear(this.selectedYear);
+    this.spDataService.getTaxCategories().subscribe(data => {
+      this.taxeCategories = data;
+      console.log(this.taxeCategories);
+    });
 
-    this.taxesCategory = [
-      {
-        title: 'Publicité',
-        number: 8521,
-        taxeCategory: 0,
-        sum : 0
-      },
-      {
-        title: 'Assurances',
-        number: 8690,
-        taxeCategory: 18,
-        sum : 0
-      },
-      {
-        title: 'Intérêts',
-        number: 8710,
-        taxeCategory: 0,
-        sum : 0
-      },
-      {
-        title: 'Frais de bureau',
-        number: 8810,
-        taxeCategory: 0,
-        sum : 0
-      },
-      {
-        title: 'Frais comptables, juridiques et autres honoraires',
-        number: 8860,
-        taxeCategory: 30,
-        sum : 0
-      },
-      {
-        title: "Frais de gestion et d'administration",
-        number: 8871,
-        taxeCategory: 37,
-        sum : 0
-      },
-      {
-        title: 'Entretien et réparation',
-        number: 8960,
-        taxeCategory: 21,
-        sum : 0
-      },
-      {
-        title: 'Salaires, traitements et avantages',
-        number: 9060,
-        taxeCategory: 38,
-        sum : 0
-      },
-      {
-        title: 'Impôt foncier',
-        number: 9180,
-        taxeCategory: 19,
-        sum : 0
-      },
-      {
-        title: 'Frais de voyage',
-        number: 9200,
-        taxeCategory: 39,
-        sum : 0
-      },
-      {
-        title: 'Service publics',
-        number: 9220,
-        taxeCategory: 32,
-        sum : 0
-      },
-      {
-        title: 'Dépenses relatives aux véhicules à moteur',
-        number: 9220,
-        taxeCategory: 0,
-        sum : 0
-      },
-      {
-        title: 'Autres dépenses',
-        number: 9270,
-        taxeCategory: 0,
-        sum : 0
-      }
-    ];
+
     /*
      this.spDataService.getAllExpenses().subscribe(data => {
      // console.log(data);
      this.expenses = data;
-     _.map(this.taxesCategory, (taxeCategory) => {
-     taxeCategory.sum = this.getPriceSumFromExpenses(data, taxeCategory.taxeCategory);
+     _.map(this.taxeCategories, (taxeCategory) => {
+     taxeCategory.sum = this.getSumFromTaxId(data, taxeCategory.taxeCategory);
      });
-     // console.log(this.taxesCategory);
+     // console.log(this.taxeCategories);
      }, err => { console.log(err); });
      */
 
   }
 
-  getPriceSumFromExpenses(expenses: [Expense], taxCategoryId: number) {
-    return _(expenses)
+
+  loadDataForYear(year) {
+    this.selectedYear = year;
+    this.spDataService.getAllExpenses(year).subscribe(data => {
+      this.expenses = data;
+      console.log(this.expenses);
+      this.calculatedSumPerTaxCategory(this.expenses);
+      this.calculateSums();
+    });
+  }
+  private calculatedSumPerTaxCategory(expenses: Expense[]) {
+    _.each(this.taxeCategories, (taxeCategory) => {
+      if (taxeCategory.taxeCategory) { // Ensure it doesn't calculatated null items
+        taxeCategory.sum = this.getSumFromTaxId(this.expenses, taxeCategory.taxeCategory);
+        taxeCategory.percentagePersonalDM = this.percentageHousePersonalDenise;
+        taxeCategory.sumPersonalDM = taxeCategory.sum * this.percentageHousePersonalDenise;
+        taxeCategory.percentagePersonalMM = this.percentageHousePersonalMerlin;
+        taxeCategory.sumPersonalMM = taxeCategory.sum * this.percentageHousePersonalMerlin;
+      }
+    });
+    console.log(this.taxeCategories);
+  }
+  private getSumFromTaxId(expenses: Expense[], taxCategoryId: number) {
+    let x = _(expenses)
       .filter((expense: Expense) => {
         return expense.taxCategoryId === taxCategoryId;
       })
       .reduce((sum, expense: Expense) => {
         return sum + expense.price;
       }, 0);
+    return parseInt(x);
   }
-  loadDataForYear(year) {
-    console.log('loadDataForYear function');
-    this.selectedYear = year;
-    this.spDataService.getAllExpenses(year).subscribe(data => {
-      this.expenses = data;
-      _.map(this.taxesCategory, (taxeCategory) => {
-        if (taxeCategory.taxeCategory) { // Ensure it doesn't calcultated null items
-          taxeCategory.sum = this.getPriceSumFromExpenses(this.expenses, taxeCategory.taxeCategory).toFixed(2);
-        }
-      });
-    });
+  private calculateSums () {
+    this.totalExpenses = _.reduce(this.taxeCategories, (sum: number, taxCategory) => {
+      return sum + taxCategory.sum;
+    }, 0);
+    this.totalExpensesPersonelDM = _.reduce(this.taxeCategories, (sum: number, taxCategory) => {
+      return sum + taxCategory.sumPersonalDM;
+    }, 0);
+    this.totalExpensesPersonelMM = _.reduce(this.taxeCategories, (sum: number, taxCategory) => {
+      return sum + taxCategory.sumPersonalMM;
+    }, 0);
   }
 }
