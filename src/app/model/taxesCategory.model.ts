@@ -14,5 +14,6 @@ export class TaxesCategory {
     this.percentagePersonalMM = 0;
     this.sumPersonalDM = 0;
     this.sumPersonalMM = 0;
+    this.taxeCategory = 0;
   }
 }

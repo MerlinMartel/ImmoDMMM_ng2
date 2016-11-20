@@ -93,7 +93,7 @@ export class SpDataService {
       });
 
     });
-    return getAllExObservable;
+    return getAllExObservable as Observable<Expense[]>;
   }
   createObjectForDepensesDoc(res: any) {
     _.each(res, item => {
@@ -174,7 +174,7 @@ export class SpDataService {
         {
           title: 'Publicité',
           number: 8521,
-          taxeCategory: 0
+          taxeCategory: 28
         },
         {
           title: 'Assurances',
@@ -183,13 +183,12 @@ export class SpDataService {
         },
         {
           title: 'Intérêts',
-          number: 8710,
-          taxeCategory: 0
+          number: 8710
         },
         {
           title: 'Frais de bureau',
           number: 8810,
-          taxeCategory: 0
+          taxeCategory: 23
         },
         {
           title: 'Frais comptables, juridiques et autres honoraires',
@@ -229,12 +228,12 @@ export class SpDataService {
         {
           title: 'Dépenses relatives aux véhicules à moteur',
           number: 9281,
-          taxeCategory: 0
+          taxeCategory: 41
         },
         {
           title: 'Autres dépenses',
           number: 9270,
-          taxeCategory: 0
+          taxeCategory: 42
         }
       ];
       var taxCategories: TaxesCategory[] = [];
@@ -248,6 +247,6 @@ export class SpDataService {
       observer.next(taxCategories);
       observer.complete();
     });
-    return taxCatObservable;
+    return taxCatObservable as Observable<TaxesCategory[]>;
   }
 }

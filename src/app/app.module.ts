@@ -3,12 +3,12 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
 import { AgGridModule } from 'ag-grid-ng2';
-import { ImpotComponent } from './impot/impot.component';
-import { routing, appRoutingProviders }  from './routing';
-import { SpDataService } from './sp-data/spdata.service';
+import { AppComponent } from './app.component';
+import {routing, appRoutingProviders} from "./routing/app.routing";
+import {ImpotComponent} from "./impot/impot.component";
+import {SpDataService} from "./sp-data/spdata.service";
 
 @NgModule({
   declarations: [

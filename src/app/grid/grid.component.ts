@@ -11,22 +11,16 @@ import {SpDataService} from '../sp-data/spdata.service';
   providers: [SpDataService]
 })
 export class GridComponent implements OnInit {
-  rowData: [Expense] = [];
+  private rowData: Expense[];
   private gridOptions: GridOptions;
   private columnDefs: any[];
   private rowCount: string;
-  constructor(private spDataService: SpDataService) {
 
+  constructor(private spDataService: SpDataService) {
   }
 
-
-  /*
-        cellRenderer : function(params) {
-   console.log(params);
-   }
-  * */
-
   ngOnInit() {
+    this.rowData = [];
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
       { headerName: 'Action', template: 'Ouvrir',

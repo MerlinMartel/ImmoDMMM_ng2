@@ -1,6 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-
-/* Fix le fait que quand on load une route directement (F5), la zone est vide...*/
 #hidZone{
   display:block !important;
 }
