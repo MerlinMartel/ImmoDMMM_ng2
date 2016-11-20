@@ -5,6 +5,7 @@ import {SpDataService} from '../sp-data/spdata.service';
 import {Expense} from '../model/expense.model';
 import * as _ from 'lodash';
 import goToHistoryLink = Nav.goToHistoryLink;
+import {Revenu} from "../model/revenu.model";
 
 // TODO valider ID d'imôt foncier...il y en a 2.
 
@@ -16,6 +17,7 @@ import goToHistoryLink = Nav.goToHistoryLink;
 export class ImpotComponent implements OnInit {
   taxeCategories: TaxesCategory[];
   expenses: Expense[];
+  revenues: Revenu[];
   selectedYear: number;
   availableYears: number[];
   percentageHousePersonalMerlin: number = 0.333333;
@@ -26,6 +28,9 @@ export class ImpotComponent implements OnInit {
   totalExpensesWithOutPersonelMM: number = 0;
   totalExpensesWithOutPersonelDM: number = 0;
   enpenseWithoutFlat: boolean = false;
+  totalRevenu: number;
+  totalRevenuWithout1821: number;
+  inProgress: boolean = false;
 
   constructor(private spDataService: SpDataService) {
 
@@ -45,8 +50,9 @@ export class ImpotComponent implements OnInit {
     });
 
 
+
     /*
-     this.spDataService.getAllExpenses().subscribe(data => {
+     this.spDataService.getExpenses().subscribe(data => {
      // console.log(data);
      this.expenses = data;
      _.map(this.taxeCategories, (taxeCategory) => {
@@ -60,12 +66,23 @@ export class ImpotComponent implements OnInit {
 
 
   loadDataForYear(year) {
+    this.inProgress = true;
     this.selectedYear = year;
-    this.spDataService.getAllExpenses(year).subscribe(data => {
+    this.spDataService.getExpenses(year).subscribe(data => {
       this.expenses = data;
       console.log(this.expenses);
       this.calculatedSumPerTaxCategory(this.expenses);
       this.calculateSums();
+      this.inProgress = false;
+    });
+    this.spDataService.getRevenues(year).subscribe(data => {
+      this.revenues = data;
+      this.totalRevenu = _.reduce(this.revenues, (sum, revenu: Revenu) => {
+        return sum + revenu.r1821 + revenu.r1823 + revenu.r1825;
+      }, 0);
+      this.totalRevenuWithout1821 = _.reduce(this.revenues, (sum, revenu: Revenu) => {
+        return sum + revenu.r1823 + revenu.r1825;
+      }, 0);
     });
   }
 
@@ -147,12 +164,6 @@ export class ImpotComponent implements OnInit {
           this.enpenseWithoutFlat = false;
         }
 
-        console.log('1e : ' + expense1e);
-        console.log('2e : ' + expense2e);
-        console.log('3e : ' + expense3e);
-        console.log('Global : ' + expenseGlobal);
-        console.log(expenseWithOutFlat.length);
-        console.log(expenseWithOutFlat);
         return [(expense1e + (expenseGlobal * this.percentageHousePersonalMerlin)) / (expense1e + expense2e + expense3e + expenseGlobal), expense1e + (expenseGlobal * this.percentageHousePersonalMerlin)];
     } else {
         // tous les autres cat impôt.

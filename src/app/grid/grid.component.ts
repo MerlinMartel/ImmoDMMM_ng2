@@ -43,7 +43,7 @@ export class GridComponent implements OnInit {
       {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
     ];
     this.gridOptions.rowData = this.rowData;
-    this.spDataService.getAllExpenses().subscribe(data => {
+    this.spDataService.getExpenses().subscribe(data => {
       this.rowData = data;
     }, err => { console.log(err); });
   };

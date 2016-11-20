@@ -7,20 +7,23 @@ import {Provider} from '../model/provider.model';
 import {TaxonomyHiddenList} from '../model/taxonomyHiddenList.model';
 import {Observable} from 'rxjs';
 import {TaxesCategory} from "../model/taxesCategory.model";
+import {Revenu} from "../model/revenu.model";
 
 @Injectable()
 export class SpDataService {
   expenses: Expense[] = [];
   providers: Provider[] = [];
   taxonomyHiddenList: TaxonomyHiddenList[] = [];
+  revenues: Revenu[] = [];
 
   constructor() {
   }
-  getAllExpenses(year?: number): Observable<Expense[]> {
+
+  getExpenses(year?: number): Observable<Expense[]> {
     this.expenses = []; // Reset Array, because of the push...it was accumulating
     var that = this;
-    console.log('SpDataService.getAllExpenses');
-    let getAllExObservable =  new Observable(observer => {
+    console.log('SpDataService.getExpenses');
+    let getAllExObservable = new Observable(observer => {
 
 
       let batch = pnp.sp.createBatch();
@@ -95,6 +98,7 @@ export class SpDataService {
     });
     return getAllExObservable as Observable<Expense[]>;
   }
+
   createObjectForDepensesDoc(res: any) {
     _.each(res, item => {
       let x = new Expense;
@@ -122,6 +126,7 @@ export class SpDataService {
       this.expenses.push(x);
     });
   }
+
   createObjectForDepensesItem(res: any) {
     _.each(res, item => {
       let x = new Expense;
@@ -150,6 +155,7 @@ export class SpDataService {
 
     });
   }
+
   getTaxonomyHiddenList() {
     return new Promise((resolve, reject) => {
       var taxonomyHiddenList: [TaxonomyHiddenList];
@@ -168,9 +174,10 @@ export class SpDataService {
     });
 
   }
+
   getTaxCategories(): Observable<TaxesCategory[]> {
-    let taxCatObservable =  new Observable(observer => {
-      var taxCatRaw =  [
+    let taxCatObservable = new Observable(observer => {
+      var taxCatRaw = [
         {
           title: 'Publicité',
           number: 8521,
@@ -248,5 +255,26 @@ export class SpDataService {
       observer.complete();
     });
     return taxCatObservable as Observable<TaxesCategory[]>;
+  }
+
+  getRevenues(year?: number): Observable<Revenu[]> {
+    let dateFilterString = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
+    let revenuesObs = new Observable(observer => {
+      this.revenues = [];
+      pnp.sp.web.lists.getByTitle('Revenue (Loyer et autres)').items.filter(dateFilterString).top(5000).get().then((res: any) => {
+        _.each(res, item => {
+          let x = new Revenu;
+          x.id = item.Id;
+          x.r1821 = item.revPremier;
+          x.r1823 = item.revTroisieme;
+          x.r1825 = item.revDeuxieme;
+          x.date = item.Date;
+          this.revenues.push(x);
+        });
+        observer.next(this.revenues);
+        observer.complete();
+      });
+    });
+    return revenuesObs as Observable<Revenu[]>;
   }
 }
