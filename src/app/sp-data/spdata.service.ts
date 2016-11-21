@@ -8,6 +8,7 @@ import {TaxonomyHiddenList} from '../model/taxonomyHiddenList.model';
 import {Observable} from 'rxjs';
 import {TaxesCategory} from "../model/taxesCategory.model";
 import {Revenu} from "../model/revenu.model";
+import {Transaction} from "../model/transaction.model";
 
 @Injectable()
 export class SpDataService {
@@ -15,6 +16,7 @@ export class SpDataService {
   providers: Provider[] = [];
   taxonomyHiddenList: TaxonomyHiddenList[] = [];
   revenues: Revenu[] = [];
+  transactions: Transaction[] = [];
 
   constructor() {
   }
@@ -277,4 +279,33 @@ export class SpDataService {
     });
     return revenuesObs as Observable<Revenu[]>;
   }
+
+  getTransactionCompte(year?: number): Observable<Transaction[]> {
+    let dateFilterString = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
+    let revenuesObs = new Observable(observer => {
+      this.transactions = [];
+      pnp.sp.web.lists.getByTitle('Transactions Compte Banque').items.filter(dateFilterString).top(5000).get().then((res: any) => {
+        _.each(res, item => {
+          let x = new Transaction;
+          x.id = item.Id;
+          x.folio = item.CompteNumero;
+          x.accountType = item.CompteType;
+          x.date = item.Date;
+          x.number = 0;
+          x.description = item.Description;
+          x.withdrawal = item.Retrait;
+          x.deposit = item.Depot;
+          x.interest = item.Interet;
+          x.refund = item.Remboursement;
+          x.balance = item.Solde;
+          this.transactions.push(x);
+        });
+        observer.next(this.transactions);
+        observer.complete();
+      });
+    });
+    return revenuesObs as Observable<Transaction[]>;
+  }
+
+
 }

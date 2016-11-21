@@ -6,8 +6,10 @@ import {Expense} from '../model/expense.model';
 import * as _ from 'lodash';
 import goToHistoryLink = Nav.goToHistoryLink;
 import {Revenu} from "../model/revenu.model";
+import {Transaction} from "../model/transaction.model";
 
 // TODO valider ID d'imôt foncier...il y en a 2.
+// TODO peut avoir problème de load timing... mettre en place un forkJoin.
 
 @Component({
   selector: 'app-impot',
@@ -31,6 +33,7 @@ export class ImpotComponent implements OnInit {
   totalRevenu: number;
   totalRevenuWithout1821: number;
   inProgress: boolean = false;
+  interest: number;
 
   constructor(private spDataService: SpDataService) {
 
@@ -48,7 +51,6 @@ export class ImpotComponent implements OnInit {
       this.taxeCategories = data;
       console.log(this.taxeCategories);
     });
-
 
 
     /*
@@ -84,6 +86,16 @@ export class ImpotComponent implements OnInit {
         return sum + revenu.r1823 + revenu.r1825;
       }, 0);
     });
+    this.spDataService.getTransactionCompte(year).subscribe(data => {
+      this.interest = _(data)
+        .filter((transaction: Transaction) => {
+          return transaction.accountType.indexOf('PR') != -1;
+        })
+        .reduce((sum, transaction: Transaction) => {
+          return sum + transaction.interest;
+        }, 0);
+      console.log('interest : ' + this.interest);
+    });
   }
 
   private calculatedSumPerTaxCategory(expenses: Expense[]) {
@@ -94,6 +106,13 @@ export class ImpotComponent implements OnInit {
         taxeCategory.sumPersonalDM = this.getPersonalSumFromTaxId(this.expenses, taxeCategory.taxeCategory, this.percentageHousePersonalDenise)[1];
         taxeCategory.percentagePersonalMM = this.getPersonalSumFromTaxId(this.expenses, taxeCategory.taxeCategory, this.percentageHousePersonalMerlin)[0];
         taxeCategory.sumPersonalMM = this.getPersonalSumFromTaxId(this.expenses, taxeCategory.taxeCategory, this.percentageHousePersonalMerlin)[1];
+      }
+      if (taxeCategory.number === 8710) { // AKA Interest
+        taxeCategory.sum = this.interest;
+        taxeCategory.percentagePersonalDM = this.percentageHousePersonalDenise;
+        taxeCategory.sumPersonalDM = this.interest * this.percentageHousePersonalDenise;
+        taxeCategory.percentagePersonalMM = this.percentageHousePersonalMerlin;
+        taxeCategory.sumPersonalMM = this.interest * this.percentageHousePersonalMerlin;
       }
     });
     console.log(this.taxeCategories);
@@ -165,7 +184,7 @@ export class ImpotComponent implements OnInit {
         }
 
         return [(expense1e + (expenseGlobal * this.percentageHousePersonalMerlin)) / (expense1e + expense2e + expense3e + expenseGlobal), expense1e + (expenseGlobal * this.percentageHousePersonalMerlin)];
-    } else {
+      } else {
         // tous les autres cat impôt.
         let x = _(expensesInCategory)
           .reduce((sum, expense: Expense) => {
@@ -174,7 +193,7 @@ export class ImpotComponent implements OnInit {
         return [percentage, x * percentage];
       }
     } else {
-  // AKA, denise, qui a 0 % perso
+      // AKA, denise, qui a 0 % perso
       return [0, 0]; // TODO, faire le vrai calcul !
     }
   }

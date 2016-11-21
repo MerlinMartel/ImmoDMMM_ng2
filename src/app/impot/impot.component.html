@@ -44,10 +44,20 @@
     <div class="cell"></div>
     <div class="cell">{{totalExpensesWithOutPersonelMM | number:'.0-2'}}</div>
   </div>
+  <div class="row">
+    <div class="cell">Ajout sur le revenue personnel (sans 1821)</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell">{{(totalRevenuWithout1821 / 2) - totalExpensesWithOutPersonelDM | number:'.0-2'}}</div>
+    <div class="cell"></div>
+    <div class="cell">{{(totalRevenuWithout1821 / 2) - totalExpensesWithOutPersonelMM | number:'.0-2'}}</div>
+  </div>
 </div>
-<div *ngIf="enpenseWithoutFlat">ATTENTION : il y a des dépenses qui n'ont pas de logement !</div>
+<div class="Warning" *ngIf="enpenseWithoutFlat">ATTENTION : il y a des dépenses qui n'ont pas de logement !</div>
 <h2 *ngIf="expenses">Nombre d'items considéré : {{expenses.length}}</h2>
-
+<br>
+<br>
 <h1>Revenue</h1>
 <div class="container ms-font-m">
   <div class="row">
