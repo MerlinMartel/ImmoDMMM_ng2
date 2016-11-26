@@ -15,6 +15,8 @@ export class GridComponent implements OnInit {
   private gridOptions: GridOptions;
   private columnDefs: any[];
   private rowCount: string;
+  selectedYear: number;
+  availableYears: number[];
 
   constructor(private spDataService: SpDataService) {
   }
@@ -43,11 +45,19 @@ export class GridComponent implements OnInit {
       {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
     ];
     this.gridOptions.rowData = this.rowData;
-    this.spDataService.getExpenses().subscribe(data => {
+    this.selectedYear = new Date().getFullYear();
+    this.availableYears = [];  // TODO : trouver une manière de faire ça plus élégant
+    for (let i = 2010; i <= this.selectedYear; i++) {
+      this.availableYears.push(i);
+    }
+    this.loadDataForYear(this.selectedYear);
+
+  };
+  loadDataForYear(year){
+    this.spDataService.getExpenses(year).subscribe(data => {
       this.rowData = data;
     }, err => { console.log(err); });
-  };
-
+  }
   private onFilterChanged($event) {
     console.log('onFilterChanged');
     this.gridOptions.api.setQuickFilter($event.target.value);
