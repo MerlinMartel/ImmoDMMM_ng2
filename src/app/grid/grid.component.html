@@ -1,23 +1,32 @@
-<link rel="stylesheet" href="https://appsforoffice.microsoft.com/fabric/fabric-core/4.0.0/fabric.min.css">
-<link rel="stylesheet" href="https://appsforoffice.microsoft.com/fabric/fabric-js/1.0.0/fabric.components.min.css">
 <link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/ag-grid.css" rel="stylesheet" />
-<link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/theme-office-ui-fabric.css" rel="stylesheet" />
+<link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/temp/theme-office-ui-fabric.css" rel="stylesheet" />
 
+<div class="grid-nav">
+  <div class="yearSelector">
+    <span class="ms-font-xl">Année : </span>
+      <select class="ms-font-l" (change)="loadDataForYear($event.target.value)">
+        <option *ngFor="let year of availableYears" [selected]="year">{{year}}</option>
+      </select>
+      <img *ngIf="inProgress" alt="Veuillez patienter" src="/_layouts/15/images/gears_anv4.gif?rev=43" style="width:16px; height:16px; font-size:0px;">
+  </div>
+  <div>
+    <div class="changeExpense">
+      <button type="button" (click)="loadDataForYear(0)">Charger les dépenses sans date</button>
+    </div>
+    <div class="addExpense">
+      <button type="button" (click)="goToDocLib()">Ajouter une dépense</button>
+    </div>
+  </div>
 
-<h1>Année en cours :
-  <select (change)="loadDataForYear($event.target.value)">
-    <option *ngFor="let year of availableYears" [selected]="year">{{year}}</option>
-  </select>
-  <img *ngIf="inProgress" alt="Veuillez patienter" src="/_layouts/15/images/gears_anv4.gif?rev=43" style="width:32px; height:32px; font-size:0px;">
-</h1>
+</div>
 
 <div class="uma-app">
-  <input placeholder="Filtre... (fonctionne pas)" type="text"
+  <input class="grid-search" placeholder="Filtre... (fonctionne pas)" type="text"
          (oninput)="onFilterChanged($event)"
          (onchange)="onFilterChanged($event)"
          (onkeydown)="onFilterChanged($event)"
          (onkeyup)="onFilterChanged($event)"/>
-  <ag-grid-ng2 #agGrid class="ag-fresh" style="width: 100%;"
+  <ag-grid-ng2 #agGrid class="office-ui-fabric" style="width: 100%;"
                [gridOptions]="gridOptions"
                [columnDefs]="columnDefs"
                [showToolPanel]="showToolPanel"
@@ -32,7 +41,7 @@
                rowHeight="22"
                rowSelection="multiple"
                (rowClicked)="onRowClicked($event)"
-               (cellClicked)="oncellClicked($event)">
+               (cellClicked)="onCellClicked($event)">
   </ag-grid-ng2>
 
 </div>

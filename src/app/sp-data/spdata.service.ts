@@ -30,9 +30,13 @@ export class SpDataService {
 
       let batch = pnp.sp.createBatch();
       if (year !== undefined) {
-        console.log('year is defined');
-        let dateFilterStringForSpecificYearDoc = "Date1 gt '" + year + "-01-01T00:00:00Z' and Date1 lt '" + year + "-12-31T00:00:00Z'";
-        let dateFilterStringForSpecificYearItem = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
+        // Content type 0x012000532D570857F0FA419A99D34691A46D25 == Folder content type
+        let dateFilterStringForSpecificYearDoc = "Date1 gt '" + year + "-01-01T00:00:00Z' and Date1 lt '" + year + "-12-31T00:00:00Z' and ContentTypeId ne '0x012000532D570857F0FA419A99D34691A46D25'";
+        let dateFilterStringForSpecificYearItem = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z' and ContentTypeId ne '0x012000532D570857F0FA419A99D34691A46D25'";
+        if (year === 0) {
+          dateFilterStringForSpecificYearDoc = "Date1 eq null and ContentTypeId ne '0x012000532D570857F0FA419A99D34691A46D25'";
+          dateFilterStringForSpecificYearItem = "Date eq null and ContentTypeId ne '0x012000532D570857F0FA419A99D34691A46D25'";
+        }
         pnp.sp.web.lists.getByTitle('Depenses').items.filter(dateFilterStringForSpecificYearDoc).top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesDoc(res);
         });
@@ -40,7 +44,6 @@ export class SpDataService {
           this.createObjectForDepensesItem(res);
         });
       } else {
-        console.log('year is NOT defined');
         pnp.sp.web.lists.getByTitle('Depenses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesDoc(res);
         });
@@ -110,7 +113,9 @@ export class SpDataService {
       x.id = item.Id;
       x.created = item.Created;
       x.modified = item.Modified;
-      x.date = item.Date1;
+      if (item.Date1 != null) {
+        x.date = new Date(item.Date1).format('yyyy-MM-dd');
+      }
       x.authorId = item.AuthorId;
       x.providerId = parseInt(item.FournisseursId);
       x.title = item.Title;

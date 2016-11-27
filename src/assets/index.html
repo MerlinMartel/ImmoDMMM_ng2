@@ -1,29 +1,17 @@
 <script type="text/javascript">
   window.Zone = undefined;
-</script>
 
-<!--Mettre le base URL comme l'URL de SharePoint courante. Par défault, c'est "/", mais SharePoint est mélangé...-->
-<script>
-
+  // Mettre le base URL comme l'URL de SharePoint courante. Par défault, c'est "/", mais SharePoint est mélangé...
   var fullUrl = document.location.href;
   spUrl = fullUrl.substring(0, fullUrl.indexOf('.aspx') + 5);
   document.write('<base href="' + spUrl + '" />');
-
 </script>
 
-<style>
-  .validated-true{
-    background-color: green;
-  }
-  .validated-false{
-    background-color: red;
-  }
-  .ag-header-cell-filtered {
-    background-color: #e5e5e5;
-  }
-</style>
-<link rel="stylesheet" href="https://spoprod-a.akamaihd.net/files/fabric/office-ui-fabric-core/4.1.0/css/fabric.min.css">
 <app-root>Loading...</app-root>
+<!--link rel="stylesheet" href="https://spoprod-a.akamaihd.net/files/fabric/office-ui-fabric-core/4.1.0/css/fabric.min.css"-->
+<link rel="stylesheet" href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/fabric.min.css">
+<link rel="stylesheet" href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/fabric.components.min.css">
 <script type="text/javascript" src="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/inline.bundle.js"></script>
 <script type="text/javascript" src="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/styles.bundle.js"></script>
-<script type="text/javascript" src="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/main.bundle.js"></script></body>
+<script type="text/javascript" src="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/main.bundle.js"></script>
+

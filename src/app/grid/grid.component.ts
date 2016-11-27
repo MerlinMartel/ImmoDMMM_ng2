@@ -7,7 +7,7 @@ import {SpDataService} from '../sp-data/spdata.service';
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.css'],
+  styleUrls: ['grid.component.less'],
   providers: [SpDataService]
 })
 export class GridComponent implements OnInit {
@@ -17,21 +17,24 @@ export class GridComponent implements OnInit {
   private rowCount: string;
   selectedYear: number;
   availableYears: number[];
+  inProgress: boolean = false;
 
   constructor(private spDataService: SpDataService) {
+    console.log('GridComponent - constructor');
   }
 
   ngOnInit() {
+    console.log('GridComponent - ngOnInit');
     this.rowData = [];
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
-      { headerName: 'Action', template: 'Ouvrir',
-        width: 80},
+      { headerName: 'Action', template: '<div style="width: 100%" data-action-type="openItem">Ouvrir</div>',
+        width: 60},
       {headerName: 'Titre', field: 'title', width: 100},
-      {headerName: 'Type', field: 'type', width: 70},
-      {headerName: 'Prix', field: 'price', width: 100},
+
+      {headerName: 'Prix', field: 'price', width: 70},
       {
-        headerName: 'Validé', field: 'validated', width: 90,
+        headerName: 'Validé', field: 'validated', width: 50,
         cellClassRules: {
           'validated-true': 'x == true',
           'validated-false': 'x != true'
@@ -39,10 +42,10 @@ export class GridComponent implements OnInit {
       },
       {headerName: 'Gestionnaire', field: 'manager', width: 100},
       {headerName: 'Date', field: 'date', width: 100, sort: 'desc'},
-      {headerName: 'Année', field: 'year', width: 100},
-      {headerName: 'Fournisseur', field: 'provider', width: 100},
+      {headerName: 'Fournisseur', field: 'provider', width: 150},
       {headerName: 'Logement', field: 'flat', width: 100},
-      {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 100},
+      {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 150},
+      {headerName: 'Type', field: 'type', width: 70},
     ];
     this.gridOptions.rowData = this.rowData;
     this.selectedYear = new Date().getFullYear();
@@ -53,9 +56,11 @@ export class GridComponent implements OnInit {
     this.loadDataForYear(this.selectedYear);
 
   };
-  loadDataForYear(year){
+  loadDataForYear(year) {
+    this.inProgress = true;
     this.spDataService.getExpenses(year).subscribe(data => {
       this.rowData = data;
+      this.inProgress = false;
     }, err => { console.log(err); });
   }
   private onFilterChanged($event) {
@@ -83,26 +88,21 @@ export class GridComponent implements OnInit {
     this.calculateRowCount();
   }
   private onRowClicked($event) {
-    console.log('onRowClicked: ');
-    console.log($event);
-    if ($event.event.target !== undefined) {
-      let data = $event.data;
-      // TODO PB - let actionType = $event.event.target.getAttribute("data-action-type");
-      return this.openItem(data);
-
-      /*            switch (actionType) {
-       case "openItem":
-       return this.openItem(data);
-       }*/
-    }
   }
-  private onCellClicked($event) {
+  private onCellClicked(event) {
     console.log('onCellClicked: ');
+    if (event.colDef.headerName == 'Action') {
+      let data = event.data;
+      return this.openItem(data);
+    }
   }
   public openItem(data: any) {
     window.location.href = data.relativeEditLink;
   }
   private onQuickFilterChanged($event) {
     this.gridOptions.api.setQuickFilter($event.target.value);
+  }
+  goToDocLib() {
+    window.location.href = "/sites/immoDMMM/1821Bennett/Depenses/Forms/AllItems.aspx";
   }
 }

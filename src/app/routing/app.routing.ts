@@ -7,7 +7,8 @@ import {ImpotComponent} from '../impot/impot.component';
 
 const appRoutes: Routes = [
   { path: 'taxes', component: ImpotComponent },
-  { path: '', component: GridComponent }
+  { path: 'expenses', component: GridComponent },
+  { path: '**', redirectTo: 'expenses' }
   ];
 
 export const appRoutingProviders: any[] = [

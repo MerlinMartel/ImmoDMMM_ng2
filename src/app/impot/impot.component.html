@@ -1,10 +1,13 @@
-<h1>Année en cours :
-  <select (change)="loadDataForYear($event.target.value)">
-  <option *ngFor="let year of availableYears" [selected]="year">{{year}}</option>
-</select>
-  <img *ngIf="inProgress" alt="Veuillez patienter" src="/_layouts/15/images/gears_anv4.gif?rev=43" style="width:32px; height:32px; font-size:0px;">
-</h1>
 
+
+
+<div class="yearSelector">
+  <span class="ms-font-xl">Année : </span>
+  <select class="ms-font-l" (change)="loadDataForYear($event.target.value)">
+    <option *ngFor="let year of availableYears" [selected]="year">{{year}}</option>
+  </select>
+  <img *ngIf="inProgress" alt="Veuillez patienter" src="/_layouts/15/images/gears_anv4.gif?rev=43" style="width:16px; height:16px; font-size:0px;">
+</div>
 <br>
 <br>
 <div class="container ms-font-m">

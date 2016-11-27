@@ -2,3 +2,20 @@
 #hidZone{
   display:block !important;
 }
+.validated-true{
+  color: green;
+  font-weight: bold;
+}
+.validated-false{
+  color: red;
+  font-weight: bold;
+}
+.ag-header-cell-filtered {
+  background-color: #e5e5e5;
+}
+.article-body, div.article, div.welcome{
+  height: 0!important;
+  padding-top: 0!important;
+  padding-bottom: 0!important;
+  display: none;
+}

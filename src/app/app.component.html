@@ -1,5 +1,26 @@
-<nav class="menu">
-  <a [routerLink]="['/']" [routerLinkActive]="['is-active']">Dépenses</a>
-  <a [routerLink]="['/taxes']" [routerLinkActive]="['is-active']">Impôt</a>
-</nav>
-<router-outlet></router-outlet>
+<div class="ms-CommandBar">
+  <div class="ms-CommandBar-mainArea">
+    <div class="ms-CommandButton">
+      <button class="ms-CommandButton-button" [routerLink]="['/expenses']"
+              [routerLinkActive]="['route-is-active']">
+        <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
+          <i class="ms-Icon ms-Icon--BulletedList"></i>
+        </span>
+        <span class="ms-CommandButton-label">Dépenses</span>
+      </button>
+    </div>
+    <div class="ms-CommandButton">
+      <button class="ms-CommandButton-button" [routerLink]="['/taxes']" [routerLinkActive]="['route-is-active']">
+        <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
+          <i class="ms-Icon ms-Icon--Financial"></i>
+        </span>
+        <span class="ms-CommandButton-label">Impôt</span>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="route-outlet">
+  <router-outlet></router-outlet>
+</div>
+
+
