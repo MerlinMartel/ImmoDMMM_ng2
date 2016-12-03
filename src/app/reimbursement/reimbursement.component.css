@@ -1,0 +1,23 @@
+.container {
+  display: table;
+  float: left;
+  width: 450px;
+}
+.tableHead{
+  display: table-header-group;
+}
+.row  {
+  display: table-row;
+}
+.cell {
+  display: table-cell;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom: solid black 1px;
+}
+.actionRow{
+  margin-bottom: 30px;
+}
+.left{
+  float: left;
+}

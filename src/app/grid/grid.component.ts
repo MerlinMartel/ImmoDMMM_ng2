@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-
 import {GridOptions} from 'ag-grid/main';
 import {Expense} from '../model/expense.model';
-import {SpDataService} from '../sp-data/spdata.service';
+import {SpDataService} from "../sp-data/spdata.service";
 
 @Component({
   selector: 'app-grid',
@@ -20,11 +19,9 @@ export class GridComponent implements OnInit {
   inProgress: boolean = false;
 
   constructor(private spDataService: SpDataService) {
-    console.log('GridComponent - constructor');
   }
 
   ngOnInit() {
-    console.log('GridComponent - ngOnInit');
     this.rowData = [];
     this.gridOptions = <GridOptions>{};
     this.columnDefs = [
@@ -44,8 +41,7 @@ export class GridComponent implements OnInit {
       {headerName: 'Date', field: 'date', width: 100, sort: 'desc'},
       {headerName: 'Fournisseur', field: 'provider', width: 150},
       {headerName: 'Logement', field: 'flat', width: 100},
-      {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 150},
-      {headerName: 'Type', field: 'type', width: 70},
+      {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 150}
     ];
     this.gridOptions.rowData = this.rowData;
     this.selectedYear = new Date().getFullYear();

@@ -18,4 +18,5 @@ export class Expense {
   taxCategory: string;
   relativeEditLink: string;
   type: string;
+  p:boolean;
 }

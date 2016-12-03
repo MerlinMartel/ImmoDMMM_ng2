@@ -9,6 +9,7 @@ import {Observable} from 'rxjs';
 import {TaxesCategory} from "../model/taxesCategory.model";
 import {Revenu} from "../model/revenu.model";
 import {Transaction} from "../model/transaction.model";
+import {Reimbursement} from "../model/reimbursement.model";
 
 @Injectable()
 export class SpDataService {
@@ -17,18 +18,18 @@ export class SpDataService {
   taxonomyHiddenList: TaxonomyHiddenList[] = [];
   revenues: Revenu[] = [];
   transactions: Transaction[] = [];
+  reimbursements: Reimbursement[] = [];
 
   constructor() {
   }
 
   getExpenses(year?: number): Observable<Expense[]> {
-    this.expenses = []; // Reset Array, because of the push...it was accumulating
     var that = this;
-    console.log('SpDataService.getExpenses');
     let getAllExObservable = new Observable(observer => {
 
-
+      that.expenses = []; // Reset Array, because of the push...it was accumulating
       let batch = pnp.sp.createBatch();
+      console.log(batch);
       if (year !== undefined) {
         // Content type 0x012000532D570857F0FA419A99D34691A46D25 == Folder content type
         let dateFilterStringForSpecificYearDoc = "Date1 gt '" + year + "-01-01T00:00:00Z' and Date1 lt '" + year + "-12-31T00:00:00Z' and ContentTypeId ne '0x012000532D570857F0FA419A99D34691A46D25'";
@@ -47,6 +48,7 @@ export class SpDataService {
         pnp.sp.web.lists.getByTitle('Depenses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesDoc(res);
         });
+        _.each(this.expenses, )
         pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesItem(res);
         });
@@ -59,7 +61,7 @@ export class SpDataService {
           that.providers.push(x);
         });
       });
-      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).get().then((res: any) => {
+      pnp.sp.site.rootWeb.lists.getByTitle('TaxonomyHiddenList').items.top(5000).inBatch(batch).get().then((res: any) => {
         _.each(res, item => {
           let x = new TaxonomyHiddenList;
           x.id = item.Id;
@@ -70,8 +72,7 @@ export class SpDataService {
           that.taxonomyHiddenList.push(x);
         });
       });
-      batch.execute().then(() => {
-        console.log('everything is loaded !!!');
+      batch.execute().then((res) => {
         _.map(that.expenses, (expenseItem) => {
           let taxoItemFiltered = _.filter(that.taxonomyHiddenList, (taxoItem) => {
             return taxoItem.id == expenseItem.flatId;
@@ -103,7 +104,6 @@ export class SpDataService {
     });
     return getAllExObservable as Observable<Expense[]>;
   }
-
   createObjectForDepensesDoc(res: any) {
     _.each(res, item => {
       let x = new Expense;
@@ -120,6 +120,7 @@ export class SpDataService {
       x.providerId = parseInt(item.FournisseursId);
       x.title = item.Title;
       x.manager = item.GestionnairesChoice;
+      x.p = item.P;
       x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
       if (x.date != undefined) {
         x.year = parseInt(x.date.substr(0, 4));
@@ -133,7 +134,6 @@ export class SpDataService {
       this.expenses.push(x);
     });
   }
-
   createObjectForDepensesItem(res: any) {
     _.each(res, item => {
       let x = new Expense;
@@ -148,6 +148,7 @@ export class SpDataService {
       x.providerId = item.FournisseursId;
       x.title = item.Title;
       x.manager = item.GestionnairesChoice;
+      x.p = item.P;
       x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Lists/depenses/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
       if (x.date != undefined) {
         x.year = parseInt(x.date.substr(0, 4));
@@ -162,7 +163,6 @@ export class SpDataService {
 
     });
   }
-
   getTaxonomyHiddenList() {
     return new Promise((resolve, reject) => {
       var taxonomyHiddenList: [TaxonomyHiddenList];
@@ -181,7 +181,6 @@ export class SpDataService {
     });
 
   }
-
   getTaxCategories(): Observable<TaxesCategory[]> {
     let taxCatObservable = new Observable(observer => {
       var taxCatRaw = [
@@ -263,7 +262,6 @@ export class SpDataService {
     });
     return taxCatObservable as Observable<TaxesCategory[]>;
   }
-
   getRevenues(year?: number): Observable<Revenu[]> {
     let dateFilterString = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
     let revenuesObs = new Observable(observer => {
@@ -284,7 +282,6 @@ export class SpDataService {
     });
     return revenuesObs as Observable<Revenu[]>;
   }
-
   getTransactionCompte(year?: number): Observable<Transaction[]> {
     let dateFilterString = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
     let revenuesObs = new Observable(observer => {
@@ -311,6 +308,25 @@ export class SpDataService {
     });
     return revenuesObs as Observable<Transaction[]>;
   }
-
-
+  getReimbursement(): Observable<Reimbursement[]> {
+    let ReimbursementObs = new Observable(observer => {
+      this.reimbursements = [];
+      pnp.sp.web.lists.getByTitle('Remboursement').items.top(5000).get().then((res: any) => {
+        _.each(res, item => {
+          let x = new Reimbursement();
+          x.id = item.Id;
+          x.title = item.Title;
+          x.date = item.Date;
+          x.manager = item.GestionnairesChoice;
+          x.type = item.TypeRemboursement;
+          x.amount = item.Montant;
+          x.year = parseInt(item.Ann_x00e9_e.substring(0, 4)); // TODO : devrait être plus clean
+          this.reimbursements.push(x);
+        });
+        observer.next(this.reimbursements);
+        observer.complete();
+      });
+    });
+    return ReimbursementObs as Observable<Reimbursement[]>;
+  }
 }

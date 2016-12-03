@@ -17,8 +17,18 @@
         <span class="ms-CommandButton-label">Impôt</span>
       </button>
     </div>
+    <div class="ms-CommandButton">
+      <button class="ms-CommandButton-button" [routerLink]="['/reimbursement']" [routerLinkActive]="['route-is-active']">
+        <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
+          <i class="ms-Icon ms-Icon--AirTickets"></i>
+        </span>
+        <span class="ms-CommandButton-label">Remboursement</span>
+      </button>
+    </div>
   </div>
 </div>
+
+
 <div class="route-outlet">
   <router-outlet></router-outlet>
 </div>

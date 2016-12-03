@@ -1,0 +1,53 @@
+<div class="ms-Grid">
+
+  <div class="ms-Grid-row actionRow">
+    <div class="ms-Grid-col ms-u-lg12">
+      <img class="left" *ngIf="inProgress" alt="Veuillez patienter" src="/_layouts/15/images/gears_anv4.gif?rev=43"
+           style="width:16px; height:16px; font-size:0px;">
+
+      <div class="left">
+        <button type="button" (click)="addReimbursement()">Ajouter un remboursement</button>
+      </div>
+      <div class="left">
+        <button type="button" (click)="goToReimbursementList()">Voir la liste de remboursement</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-Grid-row">
+    <div class="ms-Grid-col ms-u-lg8">
+      <div class="container  ms-font-m">
+        <div class="row">
+          <div class="cell">Year</div>
+          <div class="cell">Cat</div>
+          <div class="cell">MM</div>
+          <div class="cell">DM</div>
+        </div>
+        <div class="row" *ngFor="let displayReimbursement of displayReimbursements">
+          <div class="ms-font-xl">{{displayReimbursement.year}}</div>
+          <div class="cell">
+            <div>Dépense</div>
+            <div>Remboursement</div>
+            <div>Sous-Total</div>
+          </div>
+          <div class="cell">
+            <div>{{displayReimbursement.expenseMM | number:'.0-2'}}</div>
+            <div>{{displayReimbursement.reimbursementMM | number:'.0-2'}}</div>
+            <div>{{displayReimbursement.subTotalMM | number:'.0-2'}}</div>
+          </div>
+          <div class="cell">
+            <div>{{displayReimbursement.expenseDM | number:'.0-2'}}</div>
+            <div>{{displayReimbursement.reimbursementDM | number:'.0-2'}}</div>
+            <div>{{displayReimbursement.subTotalDM | number:'.0-2'}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ms-Grid-col ms-u-lg4">
+      <div class="ms-font-xl">Total MM : {{remboursementMM | number:'.0-2'}}</div>
+      <div class="ms-font-xl">Total DM : {{remboursementDM | number:'.0-2'}}</div>
+    </div>
+  </div>
+</div>
+
+

@@ -9,12 +9,14 @@ import { AppComponent } from './app.component';
 import {routing, appRoutingProviders} from "./routing/app.routing";
 import {ImpotComponent} from "./impot/impot.component";
 import {SpDataService} from "./sp-data/spdata.service";
+import { ReimbursementComponent } from './reimbursement/reimbursement.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
-    ImpotComponent
+    ImpotComponent,
+    ReimbursementComponent
   ],
   imports: [
     BrowserModule,

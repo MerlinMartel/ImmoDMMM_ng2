@@ -49,7 +49,7 @@ export class ImpotComponent implements OnInit {
     this.loadDataForYear(this.selectedYear);
     this.spDataService.getTaxCategories().subscribe(data => {
       this.taxeCategories = data;
-      console.log(this.taxeCategories);
+      //console.log(this.taxeCategories);
     });
 
 
@@ -72,7 +72,7 @@ export class ImpotComponent implements OnInit {
     this.selectedYear = year;
     this.spDataService.getExpenses(year).subscribe(data => {
       this.expenses = data;
-      console.log(this.expenses);
+      // console.log(this.expenses);
       this.calculatedSumPerTaxCategory(this.expenses);
       this.calculateSums();
       this.inProgress = false;
@@ -94,7 +94,7 @@ export class ImpotComponent implements OnInit {
         .reduce((sum, transaction: Transaction) => {
           return sum + transaction.interest;
         }, 0);
-      console.log('interest : ' + this.interest);
+      // console.log('interest : ' + this.interest);
     });
   }
 
@@ -115,7 +115,7 @@ export class ImpotComponent implements OnInit {
         taxeCategory.sumPersonalMM = this.interest * this.percentageHousePersonalMerlin;
       }
     });
-    console.log(this.taxeCategories);
+    // console.log(this.taxeCategories);
   }
 
   private getSumFromTaxId(expenses: Expense[], taxCategoryId: number) {
