@@ -127,7 +127,6 @@ export class SpDataService {
         observer.complete();
       });
     });
-    pnp.sp.web.lists.getByTitle('Depenses').items.getById(1110).
     return updateExpenseObservable;
   }
 
