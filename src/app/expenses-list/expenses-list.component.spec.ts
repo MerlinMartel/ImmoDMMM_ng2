@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { GridComponent } from './grid.component';
+import { GridComponent } from './expenses-list.component';
 
 describe('GridComponent', () => {
   let component: GridComponent;

@@ -29,7 +29,6 @@ export class SpDataService {
 
       that.expenses = []; // Reset Array, because of the push...it was accumulating
       let batch = pnp.sp.createBatch();
-      console.log(batch);
       if (year !== undefined) {
         // Content type 0x012000532D570857F0FA419A99D34691A46D25 == Folder content type
         let dateFilterStringForSpecificYearDoc = "Date1 gt '" + year + "-01-01T00:00:00Z' and Date1 lt '" + year + "-12-31T00:00:00Z' and ContentTypeId ne '0x012000532D570857F0FA419A99D34691A46D25'";
@@ -48,7 +47,7 @@ export class SpDataService {
         pnp.sp.web.lists.getByTitle('Depenses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesDoc(res);
         });
-        _.each(this.expenses, )
+        _.each(this.expenses,)
         pnp.sp.web.lists.getByTitle('D%C3%A9penses').items.top(5000).inBatch(batch).get().then((res: any) => {
           this.createObjectForDepensesItem(res);
         });
@@ -69,6 +68,7 @@ export class SpDataService {
           x.path1036 = item.Path1036;
           x.term1033 = item.Term1033;
           x.term1036 = item.Term1036;
+          x.IdForTerm = item.IdForTerm;
           that.taxonomyHiddenList.push(x);
         });
       });
@@ -79,6 +79,7 @@ export class SpDataService {
           });
           if (taxoItemFiltered.length > 0) {
             expenseItem.flat = taxoItemFiltered[0].term1036;
+            expenseItem.flatGuid = taxoItemFiltered[0].IdForTerm;
           }
         });
         _.map(that.expenses, (expenseItem) => {
@@ -87,6 +88,7 @@ export class SpDataService {
           });
           if (taxoItemFiltered.length > 0) {
             expenseItem.taxCategory = taxoItemFiltered[0].term1036;
+            expenseItem.taxCategoryGuid = taxoItemFiltered[0].IdForTerm;
           }
         });
         _.map(that.expenses, (expenseItem) => {
@@ -102,38 +104,93 @@ export class SpDataService {
       });
 
     });
-    return getAllExObservable as Observable<Expense[]>;
+    return getAllExObservable as Observable<any>;
   }
-  createObjectForDepensesDoc(res: any) {
+
+  getExpense(id): Observable<Expense> {
+    let getExpenseObservable = new Observable(observer => {
+      pnp.sp.web.lists.getByTitle('Depenses').items.getById(id).get().then((res: any) => {
+        console.log(res);
+        // TODO : changer la fonction createObjectForDepensesDoc pour traiter juste un item...
+        let x = this.createObjectForDepenseDoc(res);
+        observer.next(x);
+        observer.complete();
+      });
+    });
+    return getExpenseObservable as Observable<Expense>;
+  }
+  updateExpense(expense: Expense) {
+    let toUpdate = this.createObjectForDepenseDocToUpdate(expense);
+    let updateExpenseObservable = new Observable(observer => {
+      pnp.sp.web.lists.getByTitle('Depenses').items.getById(expense.id).update(toUpdate).then(res => {
+        observer.next(res);
+        observer.complete();
+      });
+    });
+    pnp.sp.web.lists.getByTitle('Depenses').items.getById(1110).
+    return updateExpenseObservable;
+  }
+
+  private createObjectForDepensesDoc(res: any) {
     _.each(res, item => {
-      let x = new Expense;
-      x.type = 'Document';
-      x.price = item.Prix;
-      x.validated = item.Valide;
-      x.id = item.Id;
-      x.created = item.Created;
-      x.modified = item.Modified;
-      if (item.Date1 != null) {
-        x.date = new Date(item.Date1).format('yyyy-MM-dd');
-      }
-      x.authorId = item.AuthorId;
-      x.providerId = parseInt(item.FournisseursId);
-      x.title = item.Title;
-      x.manager = item.GestionnairesChoice;
-      x.p = item.P;
-      x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
-      if (x.date != undefined) {
-        x.year = parseInt(x.date.substr(0, 4));
-      }
-      if (item.Logements) {
-        x.flatId = parseInt(item.Logements.Label);
-      }
-      if (item.TaxesCategory) {
-        x.taxCategoryId = parseInt(item.TaxesCategory.Label);
-      }
+      let x = this.createObjectForDepenseDoc(item);
       this.expenses.push(x);
     });
   }
+
+  private createObjectForDepenseDoc(item: any): Expense {
+    let x = new Expense;
+    x.type = 'Document';
+    x.price = item.Prix;
+    x.validated = item.Valide;
+    x.id = item.Id;
+    x.created = item.Created;
+    x.modified = item.Modified;
+    if (item.Date1 != null) {
+      x.date = new Date(item.Date1).format('yyyy-MM-dd');
+    }
+    x.authorId = item.AuthorId;
+    x.providerId = parseInt(item.FournisseursId);
+    x.title = item.Title;
+    x.manager = item.GestionnairesChoice;
+    x.p = item.P;
+    x.relativeEditLink = _spPageContextInfo.webAbsoluteUrl + '/Depenses/Forms/EditForm.aspx?ID=' + item.Id + '&Source=' + window.location.href;
+    if (x.date != undefined) {
+      x.year = parseInt(x.date.substr(0, 4));
+    }
+    if (item.Logements) {
+      x.flatId = parseInt(item.Logements.Label);
+    }
+    if (item.TaxesCategory) {
+      x.taxCategoryId = parseInt(item.TaxesCategory.Label);
+    }
+    return x;
+  }
+
+  private createObjectForDepenseDocToUpdate(expense: Expense) {
+    let objForUpdate: any = {};
+    objForUpdate.Prix = expense.price;
+    objForUpdate.Valide = expense.validated;
+    objForUpdate.Date1 = expense.date;
+    objForUpdate.Title = expense.title;
+    objForUpdate.GestionnairesChoice = expense.manager;
+    objForUpdate.P = expense.p;
+    objForUpdate.FournisseursId = expense.providerId;
+    objForUpdate.Logements = {
+      '__metadata' : {'type': 'SP.Taxonomy.TaxonomyFieldValue'},
+      'Label' : 'Global', // expense.flatId.toString();
+      'TermGuid': 'f2fe96e7-9b59-4dfc-99c7-712e483f1072',
+      'WssId' : -1 // expense.flatId;
+    }//'Global|f2fe96e7-9b59-4dfc-99c7-712e483f1072';
+
+
+    // x.p = item.P;
+    // x. = parseInt(item.Logements.Label);
+    // x.taxCategoryId = parseInt(item.TaxesCategory.Label);
+
+    return objForUpdate;
+  }
+
   createObjectForDepensesItem(res: any) {
     _.each(res, item => {
       let x = new Expense;
@@ -163,6 +220,7 @@ export class SpDataService {
 
     });
   }
+
   getTaxonomyHiddenList() {
     return new Promise((resolve, reject) => {
       var taxonomyHiddenList: [TaxonomyHiddenList];
@@ -181,6 +239,7 @@ export class SpDataService {
     });
 
   }
+
   getTaxCategories(): Observable<TaxesCategory[]> {
     let taxCatObservable = new Observable(observer => {
       var taxCatRaw = [
@@ -262,6 +321,7 @@ export class SpDataService {
     });
     return taxCatObservable as Observable<TaxesCategory[]>;
   }
+
   getRevenues(year?: number): Observable<Revenu[]> {
     let dateFilterString = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
     let revenuesObs = new Observable(observer => {
@@ -282,6 +342,7 @@ export class SpDataService {
     });
     return revenuesObs as Observable<Revenu[]>;
   }
+
   getTransactionCompte(year?: number): Observable<Transaction[]> {
     let dateFilterString = "Date gt '" + year + "-01-01T00:00:00Z' and Date lt '" + year + "-12-31T00:00:00Z'";
     let revenuesObs = new Observable(observer => {
@@ -308,6 +369,7 @@ export class SpDataService {
     });
     return revenuesObs as Observable<Transaction[]>;
   }
+
   getReimbursement(): Observable<Reimbursement[]> {
     let ReimbursementObs = new Observable(observer => {
       this.reimbursements = [];
@@ -328,5 +390,22 @@ export class SpDataService {
       });
     });
     return ReimbursementObs as Observable<Reimbursement[]>;
+  }
+
+  getProviders(): Observable<Provider[]> {
+    let providersObservable = new Observable(observer => {
+      pnp.sp.site.rootWeb.lists.getByTitle('Fournisseurs').items.top(5000).get().then((res: any) => {
+        let providers: Provider[] = [];
+        _.each(res, item => {
+          let x = new Provider;
+          x.id = item.Id;
+          x.title = item.Title;
+          providers.push(x);
+        });
+        observer.next(providers);
+        observer.complete();
+      });
+    });
+    return providersObservable as Observable<Provider[]>;
   }
 }

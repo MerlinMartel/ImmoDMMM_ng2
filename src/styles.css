@@ -6,9 +6,8 @@
   color: green;
   font-weight: bold;
 }
-.validated-false{
-  color: red;
-  font-weight: bold;
+.hidden{
+  display: none!important;
 }
 .ag-header-cell-filtered {
   background-color: #e5e5e5;

@@ -1,0 +1,60 @@
+
+<script type="text/javascript">
+
+</script>
+<h2>
+  Édition
+</h2>
+<form [formGroup]="editForm">
+  <div class="ms-TextField">
+    <label class="ms-Label">Titre</label>
+    <input class="ms-TextField-field" type="text" value="" placeholder="" formControlName="title">
+  </div>
+
+  <div class="ms-TextField">
+    <label class="ms-Label">Gestionnaire</label>
+    <select class="" formControlName="manager" id="manager">
+      <option *ngFor="let item of managers" [value]="item">{{item}}</option>
+    </select>
+  </div>
+  <div class="ms-TextField">
+    <label class="ms-Label">Date</label>
+    <input class="ms-TextField-field" type="text" value="" placeholder="" formControlName="date">
+  </div>
+  <div class="ms-TextField">
+    <label class="ms-Label">Logement</label>
+    <input class="ms-TextField-field" type="text" value="" placeholder="" formControlName="flatId">
+  </div>
+  <div class="ms-TextField">
+    <label class="ms-Label">Prix</label>
+    <input class="ms-TextField-field" type="text" value="" placeholder="" formControlName="price">
+  </div>
+  <div class="ms-TextField">
+    <label class="ms-Label">Fournisseur</label>
+    <select class="" formControlName="providerId" id="providerId">
+      <option *ngFor="let item of providers" [value]="item.id">{{item.title}}</option>
+    </select>
+  </div>
+  <div class="ms-TextField">
+    <label class="ms-Label">Catégorie d'impôt</label>
+    <select class="" formControlName="taxCategoryId" id="taxCategoryId">
+      <option *ngFor="let item of taxCategories" [value]="item.taxeCategory">{{item.title}}</option>
+    </select>
+  </div>
+  <div>
+    <input tabindex="-1" type="checkbox" formControlName="validated">
+    <label>
+      <span class="ms-Label">Validé</span>
+    </label>
+  </div>
+  <div>
+    <input tabindex="-1" type="checkbox" formControlName="p">
+    <label>
+      <span class="ms-Label">Remboursable ?</span>
+    </label>
+  </div>
+
+
+  <button (click)="updateExpense()">Enregistrer</button>
+  <button (click)="cancel()">Annuler</button>
+</form>

@@ -1,29 +1,32 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { GridComponent } from './grid/grid.component';
+import { GridComponent } from './expenses-list/expenses-list.component';
 import { AgGridModule } from 'ag-grid-ng2';
 import { AppComponent } from './app.component';
 import {routing, appRoutingProviders} from "./routing/app.routing";
 import {ImpotComponent} from "./impot/impot.component";
 import {SpDataService} from "./sp-data/spdata.service";
 import { ReimbursementComponent } from './reimbursement/reimbursement.component';
+import { ExpenseFormComponent } from './expense-form/expense-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
     ImpotComponent,
-    ReimbursementComponent
+    ReimbursementComponent,
+    ExpenseFormComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     AgGridModule.withNg2ComponentSupport(),
-    routing
+    routing,
+    ReactiveFormsModule
   ],
   providers: [
     SpDataService,
