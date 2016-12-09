@@ -84,7 +84,7 @@ export class ExpenseFormComponent implements OnInit {
   }
   updateExpense() {
     this.setDataFromForm();
-    this.spDataService.updateExpense(this.currentItem).subscribe(res => {
+    this.spDataService.updateExpense2(this.currentItem).subscribe(res => {
       console.log(res);
       this.router.navigate(['/expenses']);
     });

@@ -10,6 +10,8 @@ import {TaxesCategory} from "../model/taxesCategory.model";
 import {Revenu} from "../model/revenu.model";
 import {Transaction} from "../model/transaction.model";
 import {Reimbursement} from "../model/reimbursement.model";
+import {TypedHash} from "sp-pnp-js";
+import {Http, Headers, RequestOptions, Request, RequestMethod, Response, URLSearchParams} from "@angular/http";
 
 @Injectable()
 export class SpDataService {
@@ -20,7 +22,7 @@ export class SpDataService {
   transactions: Transaction[] = [];
   reimbursements: Reimbursement[] = [];
 
-  constructor() {
+  constructor(private http: Http) {
   }
 
   getExpenses(year?: number): Observable<Expense[]> {
@@ -119,8 +121,11 @@ export class SpDataService {
     });
     return getExpenseObservable as Observable<Expense>;
   }
+
   updateExpense(expense: Expense) {
-    let toUpdate = this.createObjectForDepenseDocToUpdate(expense);
+    // Le field taxo ne sont pas updaté :-(
+    let toUpdate: TypedHash<string> = this.createObjectForDepenseDocToUpdate(expense);
+
     let updateExpenseObservable = new Observable(observer => {
       pnp.sp.web.lists.getByTitle('Depenses').items.getById(expense.id).update(toUpdate).then(res => {
         observer.next(res);
@@ -129,6 +134,26 @@ export class SpDataService {
     });
     return updateExpenseObservable;
   }
+  updateExpense2 (expense: Expense) {
+    let expenseUpdate = this.createObjectForDepenseDocToUpdate(expense);
+    expenseUpdate['__metadata'] = {'type': 'SP.Data.DepensesItem'};
+    var toto: string = document.getElementById("__REQUESTDIGEST").getAttribute('Value');
+    let header = new Headers();
+    header.append('accept', 'application/json; odata=verbose');
+    header.append('content-type', 'application/json; odata=verbose');
+    header.append('X-RequestDigest', toto);
+    header.append('X-HTTP-Method', 'MERGE');
+    header.append('If-Match', '*');
+    let reqOptions = new RequestOptions({
+      url: `${_spPageContextInfo.webAbsoluteUrl}/_api/web/lists/getbytitle('Depenses')/Items(${expense.id})`,
+      method: RequestMethod.Post,
+      headers: header,
+      body: JSON.stringify(expenseUpdate)
+    });
+    let req = new Request(reqOptions);
+    return this.http.request(req).map((res) => {
+      return res.statusText;
+    });
 
   private createObjectForDepensesDoc(res: any) {
     _.each(res, item => {
@@ -177,10 +202,10 @@ export class SpDataService {
     objForUpdate.FournisseursId = expense.providerId;
     objForUpdate.Logements = {
       '__metadata' : {'type': 'SP.Taxonomy.TaxonomyFieldValue'},
-      'Label' : 'Global', // expense.flatId.toString();
+      'Label': 'Global',
       'TermGuid': 'f2fe96e7-9b59-4dfc-99c7-712e483f1072',
-      'WssId' : -1 // expense.flatId;
-    }//'Global|f2fe96e7-9b59-4dfc-99c7-712e483f1072';
+      'WssId': -1
+    };
 
 
     // x.p = item.P;
