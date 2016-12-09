@@ -21,6 +21,7 @@ export class SpDataService {
   reimbursements: Reimbursement[] = [];
 
   constructor() {
+
   }
 
   getExpenses(year?: number): Observable<Expense[]> {
