@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {GridOptions} from 'ag-grid/main';
+import {GridOptions} from 'ag-grid';
 import {Expense} from '../model/expense.model';
-import {SpDataService} from "../sp-data/spdata.service";
+import {SpDataService} from '../sp-data/spdata.service';
+
+declare var _spPageContextInfo: any;
 
 @Component({
   selector: 'app-grid',
@@ -11,20 +13,17 @@ import {SpDataService} from "../sp-data/spdata.service";
 })
 export class GridComponent implements OnInit {
   private rowData: Expense[];
-  private gridOptions: GridOptions;
-  private columnDefs: any[];
-  private rowCount: string;
+  public gridOptions: GridOptions;
   selectedYear: number;
   availableYears: number[];
-  inProgress: boolean = false;
+  inProgress = false;
 
   constructor(private spDataService: SpDataService) {
-  }
+    console.log('grid - constructor');
 
-  ngOnInit() {
     this.rowData = [];
-    this.gridOptions = <GridOptions>{};
-    this.columnDefs = [
+    this.gridOptions = {};
+    this.gridOptions.columnDefs = [
       { headerName: 'Action', template: '<div style="width: 100%" data-action-type="openItem">Ouvrir</div>',
         width: 60},
       {headerName: 'Titre', field: 'title', width: 100},
@@ -43,7 +42,7 @@ export class GridComponent implements OnInit {
       {headerName: 'Logement', field: 'flat', width: 100},
       {headerName: 'Catégorie de taxe', field: 'taxCategory', width: 150}
     ];
-    this.gridOptions.rowData = this.rowData;
+    // this.gridOptions.rowData = this.rowData;
     this.selectedYear = new Date().getFullYear();
     this.availableYears = [];  // TODO : trouver une manière de faire ça plus élégant
     for (let i = 2010; i <= this.selectedYear; i++) {
@@ -51,39 +50,20 @@ export class GridComponent implements OnInit {
     }
     this.loadDataForYear(this.selectedYear);
 
+  }
+  ngOnInit() {
   };
   loadDataForYear(year) {
+    console.log('grid - loadDataForYear');
     this.inProgress = true;
     this.spDataService.getExpenses(year).subscribe(data => {
       this.rowData = data;
+      console.log(this.rowData);
       this.inProgress = false;
     }, err => { console.log(err); });
   }
-  private onFilterChanged($event) {
-    console.log('onFilterChanged');
-    this.gridOptions.api.setQuickFilter($event.target.value);
-  }
-  private calculateRowCount() {
-
-    if (this.gridOptions.api && this.rowData) {
-      let model = this.gridOptions.api.getModel();
-      let totalRows = this.rowData.length;
-      let processedRows = model.getRowCount();
-      this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
-    }
-  }
-  private setDefaultFilter() {
-    /*    this.rowDataFiltered = _.filter(this.rowData, row => {
-     return row.CSBJStatut != 'Complété';
-     });*/
-  }
-  private onModelUpdated() {
-    this.calculateRowCount();
-  }
-  private onReady() {
-    this.calculateRowCount();
-  }
-  private onRowClicked($event) {
+  goToDocLib() {
+    window.location.href = '/sites/immoDMMM/1821Bennett/Depenses/Forms/AllItems.aspx';
   }
   private onCellClicked(event) {
     console.log('onCellClicked: ');
@@ -94,11 +74,5 @@ export class GridComponent implements OnInit {
   }
   public openItem(data: any) {
     window.location.href = data.relativeEditLink;
-  }
-  private onQuickFilterChanged($event) {
-    this.gridOptions.api.setQuickFilter($event.target.value);
-  }
-  goToDocLib() {
-    window.location.href = "/sites/immoDMMM/1821Bennett/Depenses/Forms/AllItems.aspx";
   }
 }

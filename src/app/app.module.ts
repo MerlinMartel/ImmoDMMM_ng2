@@ -4,25 +4,30 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { GridComponent } from './grid/grid.component';
-import { AgGridModule } from 'ag-grid-ng2';
+import { AgGridModule } from 'ag-grid-angular';
 import { AppComponent } from './app.component';
-import {routing, appRoutingProviders} from "./routing/app.routing";
-import {ImpotComponent} from "./impot/impot.component";
-import {SpDataService} from "./sp-data/spdata.service";
+import { routing, appRoutingProviders } from './routing/app.routing';
+import { ImpotComponent } from './impot/impot.component';
+import { SpDataService } from './sp-data/spdata.service';
 import { ReimbursementComponent } from './reimbursement/reimbursement.component';
+import {Router, RouterModule} from '@angular/router';
+import { TestgridComponent } from './testgrid/testgrid.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
     ImpotComponent,
-    ReimbursementComponent
+    ReimbursementComponent,
+    TestgridComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    AgGridModule.withNg2ComponentSupport(),
+    AgGridModule.withComponents(
+      []
+    ),
     routing
   ],
   providers: [

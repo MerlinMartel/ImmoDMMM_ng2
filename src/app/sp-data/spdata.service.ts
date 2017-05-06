@@ -6,10 +6,12 @@ import {Expense} from '../model/expense.model';
 import {Provider} from '../model/provider.model';
 import {TaxonomyHiddenList} from '../model/taxonomyHiddenList.model';
 import {Observable} from 'rxjs';
-import {TaxesCategory} from "../model/taxesCategory.model";
-import {Revenu} from "../model/revenu.model";
-import {Transaction} from "../model/transaction.model";
-import {Reimbursement} from "../model/reimbursement.model";
+import {TaxesCategory} from '../model/taxesCategory.model';
+import {Revenu} from '../model/revenu.model';
+import {Transaction} from '../model/transaction.model';
+import {Reimbursement} from '../model/reimbursement.model';
+
+declare var _spPageContextInfo: any;
 
 @Injectable()
 export class SpDataService {

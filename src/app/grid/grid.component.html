@@ -1,6 +1,3 @@
-<link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/ag-grid.css" rel="stylesheet" />
-<link href="https://mm3mm3.sharepoint.com/sites/immoDMMM/1821Bennett/code/expense-list/assets/temp/theme-office-ui-fabric.css" rel="stylesheet" />
-
 <div class="grid-nav">
   <div class="yearSelector">
     <span class="ms-font-xl">Année : </span>
@@ -26,9 +23,8 @@
          (onchange)="onFilterChanged($event)"
          (onkeydown)="onFilterChanged($event)"
          (onkeyup)="onFilterChanged($event)"/>
-  <ag-grid-ng2 #agGrid class="office-ui-fabric" style="width: 100%;"
+  <ag-grid-angular #agGrid class="office-ui-fabric" style="width: 100%;"
                [gridOptions]="gridOptions"
-               [columnDefs]="columnDefs"
                [showToolPanel]="showToolPanel"
                [rowData]="rowData"
                enableColResize
@@ -42,6 +38,6 @@
                rowSelection="multiple"
                (rowClicked)="onRowClicked($event)"
                (cellClicked)="onCellClicked($event)">
-  </ag-grid-ng2>
+  </ag-grid-angular>
 
 </div>

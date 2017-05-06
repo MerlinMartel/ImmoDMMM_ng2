@@ -4,7 +4,7 @@ import {TaxesCategory} from '../model/taxesCategory.model';
 import {SpDataService} from '../sp-data/spdata.service';
 import {Expense} from '../model/expense.model';
 import * as _ from 'lodash';
-import goToHistoryLink = Nav.goToHistoryLink;
+// import goToHistoryLink = Nav.goToHistoryLink; 2017-04-30... je sais pas pk c'est là
 import {Revenu} from "../model/revenu.model";
 import {Transaction} from "../model/transaction.model";
 
@@ -115,7 +115,7 @@ export class ImpotComponent implements OnInit {
         taxeCategory.sumPersonalMM = this.interest * this.percentageHousePersonalMerlin;
       }
     });
-    // console.log(this.taxeCategories);
+     console.log(this.taxeCategories);
   }
 
   private getSumFromTaxId(expenses: Expense[], taxCategoryId: number) {

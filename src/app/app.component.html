@@ -1,7 +1,7 @@
 <div class="ms-CommandBar">
   <div class="ms-CommandBar-mainArea">
     <div class="ms-CommandButton">
-      <button class="ms-CommandButton-button" [routerLink]="['/expenses']"
+      <button class="ms-CommandButton-button" (click)="goToExpenses($event)"
               [routerLinkActive]="['route-is-active']">
         <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
           <i class="ms-Icon ms-Icon--BulletedList"></i>
@@ -10,7 +10,7 @@
       </button>
     </div>
     <div class="ms-CommandButton">
-      <button class="ms-CommandButton-button" [routerLink]="['/taxes']" [routerLinkActive]="['route-is-active']">
+      <button class="ms-CommandButton-button" (click)="goToTaxes($event)"  [routerLinkActive]="['route-is-active']">
         <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
           <i class="ms-Icon ms-Icon--Financial"></i>
         </span>
@@ -18,11 +18,19 @@
       </button>
     </div>
     <div class="ms-CommandButton">
-      <button class="ms-CommandButton-button" [routerLink]="['/reimbursement']" [routerLinkActive]="['route-is-active']">
+      <button class="ms-CommandButton-button" (click)="goToReimbursement($event)" [routerLinkActive]="['route-is-active']">
         <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
           <i class="ms-Icon ms-Icon--AirTickets"></i>
         </span>
         <span class="ms-CommandButton-label">Remboursement</span>
+      </button>
+    </div>
+    <div class="ms-CommandButton">
+      <button class="ms-CommandButton-button" (click)="goToTest($event)" [routerLinkActive]="['route-is-active']">
+        <span class="ms-CommandButton-icon ms-fontColor-themePrimary">
+          <i class="ms-Icon ms-Icon--AirTickets"></i>
+        </span>
+        <span class="ms-CommandButton-label">tes</span>
       </button>
     </div>
   </div>

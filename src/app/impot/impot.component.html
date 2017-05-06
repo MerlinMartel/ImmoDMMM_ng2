@@ -1,6 +1,5 @@
 
 
-
 <div class="yearSelector">
   <span class="ms-font-xl">Année : </span>
   <select class="ms-font-l" (change)="loadDataForYear($event.target.value)">
@@ -24,9 +23,9 @@
     <div class="cell">{{taxeCategory.title}}</div>
     <div class="cell taxCategory">{{taxeCategory.number}}</div>
     <div class="cell">{{taxeCategory.sum | number:'.0-2'}}</div>
-    <div class="cell">{{taxeCategory.percentagePersonalDM | number:'.0-2' | percent}}</div>
+    <div class="cell">{{taxeCategory.percentagePersonalDM | number:'.0-2'}}</div>
     <div class="cell">{{taxeCategory.sumPersonalDM | number:'.0-2'}}</div>
-    <div class="cell">{{taxeCategory.percentagePersonalMM | number:'.0-2' | percent}}</div>
+    <div class="cell">{{taxeCategory.percentagePersonalMM | number:'.0-2'}}</div>
     <div class="cell">{{taxeCategory.sumPersonalMM | number:'.0-2'}}</div>
   </div>
   <div class="row">

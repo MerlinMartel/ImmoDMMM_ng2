@@ -3,7 +3,8 @@ import {SpDataService} from '../sp-data/spdata.service';
 import {DisplayReimbursement} from '../model/displayReimbursement.model';
 import {Reimbursement} from '../model/reimbursement.model';
 import {Expense} from '../model/expense.model';
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-reimbursement',
@@ -33,7 +34,7 @@ export class ReimbursementComponent implements OnInit {
     let obsReimbursement = this.spDataService.getReimbursement();
     let obsExpenses = this.spDataService.getExpenses();
     Observable.forkJoin([obsReimbursement, obsExpenses]).subscribe(data => {
-      //console.log(data);
+      // console.log(data);
       this.reimbursements = data[0];
       this.expenses = data[1];
       _.each(this.availableYears, item => {
