@@ -10,16 +10,13 @@ import { routing, appRoutingProviders } from './routing/app.routing';
 import { ImpotComponent } from './impot/impot.component';
 import { SpDataService } from './sp-data/spdata.service';
 import { ReimbursementComponent } from './reimbursement/reimbursement.component';
-import {Router, RouterModule} from '@angular/router';
-import { TestgridComponent } from './testgrid/testgrid.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
     ImpotComponent,
-    ReimbursementComponent,
-    TestgridComponent
+    ReimbursementComponent
   ],
   imports: [
     BrowserModule,

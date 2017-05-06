@@ -26,9 +26,4 @@ export class AppComponent {
     event.preventDefault();
     event.stopPropagation();
   }
-  goToTest(event) {
-    this.router.navigate(['/test']);
-    event.preventDefault();
-    event.stopPropagation();
-  }
 }
